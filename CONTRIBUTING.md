@@ -21,7 +21,7 @@ These are the project's promises, and a change that breaks one will not be merge
 5. **The core is domain-agnostic.** `core/` and `tools/` know nothing about exoplanets or asteroids; a science case is a plugin. If you find yourself adding a planet or an asteroid to `core/`, it belongs in a plugin.
 6. **Tests never touch the network or a telescope.** The suite blocks network fetches by default (see `tests/conftest.py`). A test that needs list or catalogue content patches the fetch itself, or uses a small fixture from `tests/data/`.
 7. **Credit and licence third-party data.** If a change uses someone's data, say where it came from and under what terms. If the terms are unstated, ask the owner before you add it, and do not copy the files into the repository.
-8. **Vendor keys and key extraction are not accepted.** Newer Seestar firmware needs a client-authentication handshake that Astronomo deliberately does not implement (see [the firmware note](docs/first-light/03-firmware-and-authentication.md)). Do not contribute extracted vendor keys or code that extracts them. If you think a supported route exists (an official API, Alpaca), open an issue first.
+8. **Vendor keys and key extraction are not accepted.** Newer Seestar firmware needs a client-authentication handshake that Astronomo deliberately does not implement (see [the firmware note](docs/notes/firmware-and-authentication.md)). Do not contribute extracted vendor keys or code that extracts them. If you think a supported route exists (an official API, Alpaca), open an issue first.
 
 ## Getting set up
 
@@ -50,7 +50,7 @@ Before you open a pull request, run the whole pytest suite, not just your own te
 ### Run it on a real telescope
 
 This is the most valuable contribution, and the one with the most risk, so read [Real hardware](docs/real-hardware.md),
-the [first-mission note](docs/first-light/06-first-mission.md), and the [open hardware questions](docs/first-light/05-first-light-checklist.md) first. Supervise every run, and never point a telescope at or near
+the [first-clean-night runbook](docs/runbooks/first-clean-night.md), and the [open hardware questions](docs/hardware-questions.md) first. Supervise every run, and never point a telescope at or near
 the Sun. Then open an issue with:
 
 * your firmware version and the app version;

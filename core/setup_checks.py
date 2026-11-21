@@ -287,7 +287,7 @@ def _describe_solution(
     """Offset, target pixel and the next slew, from a WCS that describes this frame."""
     ny, nx = shape
     cx, cy = (nx - 1) / 2.0, (ny - 1) / 2.0
-    solved_ra, solved_dec = (float(v) for v in solved.all_pix2world([cx], [cy], 0))
+    solved_ra, solved_dec = (float(v) for v in np.ravel(solved.all_pix2world([cx], [cy], 0)))
     solved_ra = solved_ra % 360.0
     tx, ty = (float(v) for v in np.ravel(solved.all_world2pix([target_ra], [target_dec], 0)))
     next_ra, next_dec = nudged_command(command_ra, command_dec, target_ra, target_dec, solved_ra, solved_dec)
@@ -363,7 +363,7 @@ def measure_pointing(
     except Exception as exc:  # noqa: BLE001 - a fit that will not converge is still a measured shift
         log.warning("Pointing check: could not fit a WCS to the match (%s); using the shift of the centre", exc)
         cx, cy = (nx - 1) / 2.0 - float(est["dx"]), (ny - 1) / 2.0 - float(est["dy"])
-        solved_ra, solved_dec = (float(v) for v in commanded.all_pix2world([cx], [cy], 0))
+        solved_ra, solved_dec = (float(v) for v in np.ravel(commanded.all_pix2world([cx], [cy], 0)))
         solved = make_tan_wcs(solved_ra % 360.0, solved_dec, (int(ny), int(nx)), scale)
     described = _describe_solution(
         solved, (int(ny), int(nx)), ra, dec, target_ra, target_dec, margin_px,

@@ -64,7 +64,7 @@ Three parts, in this order of importance.
 | **B. First contribution** | One real upload file accepted by a network's database, reviewed and sent by a person                                                                                    | [3](../ROADMAP.md#phase-3-first-accepted-file)      |
 | **C. Steady**             | Variable-star visits as the regular product                                                                                                                             | [5](../ROADMAP.md#phase-5-unattended-and-automatic) |
 | **A. Validated transit**  | One known transit whose mid-time agrees with the published ephemeris within its combined error and within about 3 minutes, and the whole path (target, file, validator) works | [6](../ROADMAP.md#phase-6-transits)                 |
-| **D. Further case**       | Supernova or nova follow-up, which reuses the variable-star photometry, reaching level B. Other cases: [science options](first-light/07-science-options.md)         | [8](../ROADMAP.md#phase-8-reach)                    |
+| **D. Further case**       | Supernova or nova follow-up, which reuses the variable-star photometry, reaching level B. Other cases: [science options](notes/science-options.md)         | [8](../ROADMAP.md#phase-8-reach)                    |
 
 The honest reading of the transit half: **tens of good timings a year** (about 20 accepted timings in the first 12 months after level A, a stretch of about 40), comparable with a dedicated amateur using a small telescope. A single timing from an S50 is unlikely to detect a transit-timing variation on its own.
 

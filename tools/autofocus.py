@@ -3,7 +3,7 @@
 Why this exists
     The Seestar's own autofocus is a JSON-RPC call (``start_auto_focuse``).  Newer firmware wants a
     client-authentication handshake on that port, which Astronomo deliberately does not perform (see
-    ``docs/first-light/03-firmware-and-authentication.md``).  The same scope's Alpaca server lists a
+    ``docs/notes/firmware-and-authentication.md``).  The same scope's Alpaca server lists a
     Focuser device, so this module drives it directly: take a short exposure, measure the star
     width, move, repeat across a window, fit the curve, and settle on its minimum.
 

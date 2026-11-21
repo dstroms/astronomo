@@ -1,8 +1,6 @@
 # Connect a real Seestar
 
-Moved out of the README on 2026-11-21 with the text unchanged, apart from the links. The README keeps a short summary ([Connect a real Seestar](../README.md#connect-a-real-seestar)).
-
-The README's quick start needs no telescope. This is how a Seestar S50 Pro (firmware 9.75) was connected. There are two ways to put the computer and the telescope on one network. **Use station mode (A) at home.** It keeps the internet, which the weather check and the Gaia comparison stars need during a mission. It has been tested at the bench only, not yet on the sky.
+The README's [quick start](../README.md#quick-start) needs no telescope. This page is the one place that says how to connect a real one: how a Seestar S50 Pro (firmware 9.75) was connected. There are two ways to put the computer and the telescope on one network. **Use station mode (A) at home.** It keeps the internet, which the weather check and the Gaia comparison stars need during a mission. It has been tested at the bench only, not yet on the sky.
 
 1. In the Seestar app, update the firmware. This unit was updated to **9.75**. Leave any later update until the check below has run.
 2. **A. Station mode (the telescope joins your home Wi-Fi; tested 2026-11-20).**
@@ -17,7 +15,7 @@ The README's quick start needs no telescope. This is how a Seestar S50 Pro (firm
       ```
 
       It lists the telescope, two cameras, two focusers, a filter wheel and a switch. The telescope's address can change, because it comes from your router. If your router lets you reserve it for the telescope, do (some, including a rented Xfinity gateway, may not). If it does not, leave `ASTRONOMO_SEESTAR_HOST` at its default, `seestar.local`: the name resolved to the telescope on this network, and `--hardware-check` passed with it (2026-11-20). If a name lookup is dropped on your network (guest networks and some switches do this), use the address instead and look it up again when the connection fails. Alpaca has no password, so anyone on the network can send it commands.
-   6. Set `ASTRONOMO_SEESTAR_HOST` to that address, or leave it as `seestar.local` (step 4 below).
+   6. Set `ASTRONOMO_SEESTAR_HOST` to that address, or leave it as `seestar.local` (step 4).
 3. **B. The telescope's own Wi-Fi (the way it was first connected, 2026-11-13).** Connect the computer to the telescope's Wi-Fi (`S50_xxxxx`, address `10.0.0.1`). That network has no internet, and the computer loses every other network while it is joined. Fetch the forecast first (`python main.py --fetch-forecast`). If you need both here, tether a phone over USB for internet and put the tether above Wi-Fi in the macOS service order. That has not been tried with this telescope, and it breaks if the other network is also `10.0.0.x`.
 4. In `.env`, set `ASTRONOMO_SEESTAR_TRANSPORT=alpaca`, and for station mode `ASTRONOMO_SEESTAR_HOST` to the telescope's address. Firmware 7.18 and newer needs the Alpaca transport: the default JSON-RPC transport wants a handshake Astronomo does not do. Set your site as well. A real run refuses the Denver placeholder.
 5. Run the smoke test. It connects, reads the scope and parks. It does not slew or take a picture, and it needs no plan, no forecast and no internet:
@@ -28,4 +26,4 @@ ASTRONOMO_SEESTAR_TRANSPORT=alpaca ASTRONOMO_SEESTAR_HOST=192.168.1.200 python m
 
 `--hardware-check` turns the telescope mock off for that one command. `--no-park` skips the park (use it when you do not want the arm to move). `--simulate` runs the same steps against the mock. Passed over station mode on 2026-11-20 with `--no-park`, with the computer also able to reach Open-Meteo and the Harvard VizieR mirror. A full mission over station mode has not been run yet.
 
-What this telescope has not yet answered is the [open hardware questions](first-light/05-first-light-checklist.md). Why the JSON-RPC handshake is not implemented is in [the firmware note](first-light/03-firmware-and-authentication.md); host, port and other settings are in [Configuration](configuration.md). Read [Real hardware](real-hardware.md) and [the first-mission note](first-light/06-first-mission.md) before a mission.
+What this telescope has not yet answered is the [open hardware questions](hardware-questions.md). Why the JSON-RPC handshake is not implemented is in [the firmware note](notes/firmware-and-authentication.md); host, port and other settings are in [Configuration](configuration.md). Read [Real hardware](real-hardware.md) and [the first-clean-night runbook](runbooks/first-clean-night.md) before a mission.

@@ -1,4 +1,4 @@
-# 4. MPC observatory code: read this before you plan on one
+# MPC observatory code: read this before you plan on one
 
 **Why it matters:** `ASTRONOMO_MPC_STATION_CODE` turns an asteroid ADES file from a `DRAFT_` into a file the MPC will
 accept. Without a code, you cannot submit astrometry from your own scope.
@@ -23,7 +23,7 @@ accept. Without a code, you cannot submit astrometry from your own scope.
 Fainter than 16 means working at or past the limit, in dark and clear skies, on **fast-moving** NEAs that smear during a stack. Treat the code as **a stretch goal, not a first-light item**. The honest plan is:
 
 1. Do the transit work first (AAVSO needs only a code and no magnitude limit like this).
-2. Once you have real frames, measure what magnitude your scope reaches at your site, in one stack (row 13 of the [open hardware questions](05-first-light-checklist.md) records it).
+2. Once you have real frames, measure what magnitude your scope reaches at your site, in one stack (row 13 of the [open hardware questions](../hardware-questions.md) records it).
 3. Only then decide. If you are 1 to 2 magnitudes short, alternatives are: a collaborator who already holds a code, a remote telescope with a larger aperture for the qualifying astrometry, or leaving MPC astrometry out of scope.
 
 **Astronomo's current gaps for this route** (so you know what is missing before you try): it does not write the `XXX` qualifying file or the header comment, and it measures single frames or its own stacks without a check that each object is a numbered NEA fainter than 16. Those would need building.
@@ -45,7 +45,7 @@ The order matters. Do both **on the same day, with the same email address**.
 6. You will receive two emails. Keep the one titled `MPCHLP-nnnn New obscode request by ...`; replies to it go to the MPC. Codes are assigned weekly in batches; if more than two weeks pass, reply to that email.
 7. When the code arrives, put it in `.env` as `ASTRONOMO_MPC_STATION_CODE` and **stop using `XXX`**.
 
-Coordinates you can reuse: the form wants the *same* figures as your [AAVSO site](01-aavso-observer-code.md); get them once, precisely, and copy them.
+Coordinates you can reuse: the form wants the *same* figures as your [AAVSO site](../runbooks/aavso-observer-code.md); get them once, precisely, and copy them.
 
 ## Draft: query to the MPC (only if you are unsure the telescope qualifies)
 

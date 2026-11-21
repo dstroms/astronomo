@@ -1,6 +1,6 @@
 # Variable-star feasibility
 
-Written 2026-10-29. This is the case for variable-star photometry against exoplanet transits. Transits were what the repository was built around when this note was written. The mission now takes targets from the networks that want amateur data, and on this telescope variable-star photometry is the stronger case. How a visit runs now is the [variable-star plugin](variable_stars.md). Other science options are compared in [the science-options note](../first-light/07-science-options.md).
+Written 2026-10-29. This is the case for variable-star photometry against exoplanet transits. Transits were what the repository was built around when this note was written. The mission now takes targets from the networks that want amateur data, and on this telescope variable-star photometry is the stronger case. How a visit runs now is the [variable-star plugin](variable_stars.md). Other science options are compared in [the science-options note](../notes/science-options.md).
 
 The photometry numbers below were not measured on this S50 Pro, except where a sentence names the 2026-11-18 night. Where a number comes from a different telescope, or from a model, it says so. On 2026-11-18 two Hat-P-23 visits (12 frames each) finished on this telescope. Reanalysis measured 12.145 ± 0.057 and 12.139 ± 0.042, inside the quoted error of Gaia G 12.162. The live AAVSO file was held: the telescope Wi-Fi has no internet. Those visits are not the clean 40-frame night. A simulated visit measures one differential magnitude per night on a Gaia G zero point, writes an AAVSO Extended file a person reviews, and times a minimum when the series contains one. A window from the Target Tool is still a usable night, not an eclipse: the list has a period and no time of minimum. Comparison stars are a Gaia ensemble in the frame, not a VSP chart.
 
@@ -107,7 +107,7 @@ These are about this unit.
 
 ## Odds
 
-These are judgement, not measurements, for this S50 Pro over a reasonable number of clear nights. The same comparison across every science case is in the [science-options note](../first-light/07-science-options.md).
+These are judgement, not measurements, for this S50 Pro over a reasonable number of clear nights. The same comparison across every science case is in the [science-options note](../notes/science-options.md).
 
 | Outcome | Estimate |
 |---|---|

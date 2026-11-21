@@ -54,7 +54,8 @@ def _links(path: Path):
 def test_there_are_documents_to_check():
     names = {p.relative_to(ROOT).as_posix() for p in _markdown_files()}
     assert {"README.md", "ROADMAP.md", "CONTRIBUTING.md"} <= names
-    assert any(n.startswith("docs/first-light/") for n in names)
+    assert any(n.startswith("docs/runbooks/") for n in names)
+    assert any(n.startswith("docs/notes/") for n in names)
 
 
 def test_every_document_is_listed_in_the_roadmap():

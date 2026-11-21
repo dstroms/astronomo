@@ -34,11 +34,11 @@ will be done. There is no bug bounty, and no formal support timeline.
 
 Wrong numbers, a parser that fails on a real file, a threshold that needs re-setting, or a driver call the telescope does
 not understand are ordinary bugs: use the [issue templates](.github/ISSUE_TEMPLATE/). Unconfirmed behaviour on real
-hardware is expected and is listed in the [open hardware questions](docs/first-light/05-first-light-checklist.md).
+hardware is expected and is listed in the [open hardware questions](docs/hardware-questions.md).
 
 ## Things this project does on purpose
 
 * It does **not** implement the client-authentication handshake that newer Seestar firmware needs, and it does not accept
-  contributions of extracted vendor keys. See [the firmware note](docs/first-light/03-firmware-and-authentication.md).
+  contributions of extracted vendor keys. See [the firmware note](docs/notes/firmware-and-authentication.md).
 * The dashboard is a **local, read-mostly** tool and has no login. Do not expose it to the internet.
 * `.env` is git-ignored and is where API keys and codes belong; never commit it.

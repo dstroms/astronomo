@@ -1,4 +1,4 @@
-# 07. What else can a Seestar S50 Pro and Astronomo do, and how likely is it to work?
+# What else can a Seestar S50 Pro and Astronomo do, and how likely is it to work?
 
 Written 2026-10-29. This ranks every kind of science considered so far by how likely it is to produce a contribution a
 network accepts, how much that contribution would be worth, and how much of it Astronomo already covers. The variable-star case is in [the feasibility note](../plugins/variable-star-feasibility.md).
@@ -62,7 +62,7 @@ hardware or paperwork. What is still unproven about variable stars is in [the fe
 * IOTA-ES, "Seestar S50 for Occultation Work" (timing and the GPS-flash requirement; tested on an S50):
   `https://www.iota-es.de/seestar_report.pdf`.
 * Minor Planet Center, "Guide to Minor Body Astrometry" (the observatory-code requirements):
-  `https://www.minorplanetcenter.net/iau/info/Astrometry.html`. See also [04](04-mpc-observatory-code.md).
+  `https://www.minorplanetcenter.net/iau/info/Astrometry.html`. See also [04](mpc-observatory-code.md).
 
 
 ---

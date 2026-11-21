@@ -1,6 +1,6 @@
 # Firmware and authentication
 
-Firmware 7.18 and newer asks the JSON-RPC port (4700) for a key-signed handshake. Astronomo does not perform it. The same firmware runs an **ASCOM Alpaca** server on port 32323 that needs no key. How to connect that way is in [Connect a real Seestar](../connect-a-seestar.md). What the 2026-11-13 night left open is in the [open hardware questions](05-first-light-checklist.md).
+Firmware 7.18 and newer asks the JSON-RPC port (4700) for a key-signed handshake. Astronomo does not perform it. The same firmware runs an **ASCOM Alpaca** server on port 32323 that needs no key. How to connect that way is in [Connect a real Seestar](../connect-a-seestar.md). What the 2026-11-13 night left open is in the [open hardware questions](../hardware-questions.md).
 
 ## What the JSON-RPC port requires
 

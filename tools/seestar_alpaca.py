@@ -3,7 +3,7 @@
 Why this exists
     Firmware 7.18 and later demand an RSA challenge-response handshake on the JSON-RPC port
     (4700) that :mod:`tools.telescope` deliberately does not perform (see
-    ``docs/first-light/03-firmware-and-authentication.md``).  The community reports that the
+    ``docs/notes/firmware-and-authentication.md``).  The community reports that the
     same firmware also runs a standard ASCOM Alpaca REST server on port 32323 which needs no
     key, and that a Seestar S30 Pro on firmware 7.18 was driven through it (connect, slew, park,
     gain, exposure, image download).  So this transport is the first thing to try on new firmware.
@@ -269,7 +269,7 @@ class AlpacaController(SeestarController):
             raise TelescopeError(
                 f"the Seestar's Alpaca server refused the connection ({exc}).  Check the scope is on, that the app "
                 "is not holding it, and that the Alpaca switch under Settings, then Device management, is on; "
-                "see docs/first-light/03-firmware-and-authentication.md.",
+                "see docs/notes/firmware-and-authentication.md.",
                 code=exc.code,
             ) from exc
 

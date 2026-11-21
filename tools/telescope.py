@@ -40,7 +40,7 @@ Real mode
       single-frame photometry is possible on the real scope is a first-light question.
 
     NOT implemented, on purpose: the client-authentication handshake some newer firmware
-    (reported as 7.18 and later) demands.  See ``docs/first-light/`` for why, and for the
+    (reported as 7.18 and later) demands.  See ``docs/notes/firmware-and-authentication.md`` for why, and for the
     options.  If the scope demands it, :meth:`SeestarController.connect` fails with a
     message that says so rather than looping.  The route around it is the Alpaca transport
     (``ASTRONOMO_SEESTAR_TRANSPORT=alpaca``, :mod:`tools.seestar_alpaca`), which needs no handshake.
@@ -371,7 +371,7 @@ class SeestarController:
                 raise TelescopeError(
                     f"the Seestar refused get_device_state ({first}).  If its firmware is 7.18 or later it may "
                     "require a client-authentication handshake that this driver does not perform.  Try "
-                    "ASTRONOMO_SEESTAR_TRANSPORT=alpaca (no handshake); see docs/first-light/ for the options.",
+                    "ASTRONOMO_SEESTAR_TRANSPORT=alpaca (no handshake); see docs/notes/firmware-and-authentication.md for the options.",
                     code=first.code,
                 ) from first
 

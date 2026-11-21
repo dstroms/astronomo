@@ -1,6 +1,6 @@
-# 06. The first clean night
+# The first clean night
 
-Written 2026-11-15, restructured 2026-11-20. This is the runbook for the first variable-star night that finishes with nothing assumed ([Phase 2](../../ROADMAP.md#phase-2-first-clean-night)). How to connect, and what can hurt the telescope, is in [Real hardware](../real-hardware.md) and [Connect a real Seestar](../connect-a-seestar.md). What the telescope says goes into the [open hardware questions](05-first-light-checklist.md). What happened on earlier nights, and why none of them counts as the clean night, is in the [field journal](../journal.md#the-nights). A transit is a later phase: [08-first-transit.md](08-first-transit.md).
+Written 2026-11-15, restructured 2026-11-20. This is the runbook for the first variable-star night that finishes with nothing assumed ([Phase 2](../../ROADMAP.md#phase-2-first-clean-night)). How to connect, and what can hurt the telescope, is in [Real hardware](../real-hardware.md) and [Connect a real Seestar](../connect-a-seestar.md). What the telescope says goes into the [open hardware questions](../hardware-questions.md). What happened on earlier nights, and why none of them counts as the clean night, is in the [field journal](../journal.md#the-nights). A transit is a later phase: [first-transit.md](first-transit.md).
 
 ## What counts as the clean night
 
@@ -63,7 +63,7 @@ Then join the telescope's Wi-Fi (address `10.0.0.1`) and run the same commands a
 
 ## What the night records
 
-Write the measurements in the Result column of the [open hardware questions](05-first-light-checklist.md#alpaca-path). The thresholds live there.
+Write the measurements in the Result column of the [open hardware questions](../hardware-questions.md#alpaca-path). The thresholds live there.
 
 - [ ] `--hardware-check` passes, then the mission finishes and parks. Both visits reached `COMPLETE` and the plans are DONE. No hardware check was run before either visit (a bench check passed on 2026-11-20, but with `--no-park`), and the log does not record the park
 - [ ] The weather gate reads a forecast the mission fetched, with `ASTRONOMO_ASSUME_CLEAR` unset. Both 2026-11-18 visits called Open-Meteo, the call failed on the telescope's own Wi-Fi, and `ASTRONOMO_ASSUME_CLEAR` marked the sky clear with no cloud, wind, or rain reading. Over station mode the call is reachable (bench check, 2026-11-20), and a mission has not used it
@@ -103,4 +103,4 @@ The Seestar's own plate solve stays unanswered on Alpaca. The upload file has no
 
 ## After the night
 
-Write what happened in three places, and nowhere else. First, a new entry at the top of [the nights in the field journal](../journal.md#the-nights). Second, the Result column of the [open hardware questions](05-first-light-checklist.md) for the rows the night answered. Third, the "Now" block and the tick boxes of [Phase 2 in the roadmap](../../ROADMAP.md#phase-2-first-clean-night). The README status block then gets one line pointing at the roadmap.
+Write what happened in three places, and nowhere else. First, a new entry at the top of [the nights in the field journal](../journal.md#the-nights). Second, the Result column of the [open hardware questions](../hardware-questions.md) for the rows the night answered. Third, the "Now" block and the tick boxes of [Phase 2 in the roadmap](../../ROADMAP.md#phase-2-first-clean-night). The README status block then gets one line pointing at the roadmap.
