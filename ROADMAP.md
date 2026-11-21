@@ -10,11 +10,12 @@ The plan: what each phase delivers, how it is built, and when it is done. **A ph
 
 **Where we are.** Two short (12-frame) variable-star visits finished on a real Seestar S50 Pro on 2026-11-18 (Hat-P-23). The reanalysed magnitudes, 12.145 ± 0.057 and 12.139 ± 0.042, are inside the quoted error of Gaia G 12.162. Pointing correction, autofocus and a local plate solve have worked on the sky. On 2026-11-20 the telescope joined the home network in station mode, after the router was moved off `10.0.0.x`, and one computer reached the telescope, Open-Meteo and the Harvard VizieR mirror together. The hardware check passed. Not yet seen: a whole mission over station mode, a live AAVSO file, a transit that covers a mid-time.
 
+**Phase 1 is done (2026-11-21).** The repository is public, `main` is protected and requires the tests, private vulnerability reporting is on, and every mission writes a findings summary beside its upload files and mission log ([Phase 1](#phase-1-public-release)).
+
 **Next, in this order.**
 
-1. [Phase 1, public release](#phase-1-public-release): what is left is going public (1.7). The README screenshot, the architecture diagram and the README audit (1.2), the Python version matrix (1.3), the documentation consolidation (1.5) and the findings package for each mission (1.6) are done. None of it needs the telescope, and it can run alongside Phase 2.
-2. [Phase 2, first clean night](#phase-2-first-clean-night): keep the telescope awake while connected (2.1), build the recipe for repeating a night (2.2), then a 40-frame variable-star visit on the home network with nothing assumed (2.3).
-3. [Phase 3, first accepted file](#phase-3-first-accepted-file): retry buttons (3.1), then a real file through the AAVSO's own checks (3.2).
+1. [Phase 2, first clean night](#phase-2-first-clean-night): keep the telescope awake while connected (2.1), build the recipe for repeating a night (2.2), then a 40-frame variable-star visit on the home network with nothing assumed (2.3).
+2. [Phase 3, first accepted file](#phase-3-first-accepted-file): retry buttons (3.1), then a real file through the AAVSO's own checks (3.2).
 
 Transits are [Phase 6](#phase-6-transits). Nothing before it needs one.
 
@@ -24,7 +25,7 @@ Transits are [Phase 6](#phase-6-transits). Nothing before it needs one.
 
 ## Phases
 
-Eight phases. The order is the path: **a public repository, then a clean night, then a file a network accepts, then claims you can defend, then unattended and automatic running, and only then transits.** Phase 1 does not need the telescope, so it runs alongside Phase 2. Phases 2 and 3 are in sequence. Phases 7 and 8 are later and not yet scheduled.
+Eight phases. The order is the path: **a public repository, then a clean night, then a file a network accepts, then claims you can defend, then unattended and automatic running, and only then transits.** Phase 1 did not need the telescope and is done. Phases 2 and 3 are in sequence. Phases 7 and 8 are later and not yet scheduled.
 
 **How the phases cover the goal's loop** (propose, observe, analyze, test, then submit or rework; the [mission](docs/mission.md) page and the README start from it):
 
@@ -109,15 +110,15 @@ The goal is to package results for submission to the citizen-science networks. A
 
 - [x] **Make the repository public.** Done 2026-11-21.
 - [x] **Check the recreated repository first.** Done 2026-11-21. The repository was recreated with one clean commit (the old one is kept privately). Private vulnerability reporting is on again (it can only be on for a public repository, so it came after the switch), the `tests` workflow passes on the new repository (`main` run 44915046441, the matrix run 44920545150, and pull request #5, which ran exactly `frontend` and `tests (Python 3.10)`), and the three old issues still wanted are recreated (#1 to #3; the rest stay in the old repository).
-- [ ] **Branch protection on `main`: set except for the tests.** Done 2026-11-21 as a ruleset named "Protect Main", active, with no bypass: deletion and force-push are blocked and a pull request with one approving review is required. Still open: its required-status-checks rule is on but lists no checks, so `main` does not yet require the tests (pull request #5 merged while `tests (Python 3.10)` was still running). Add `frontend` and `tests (Python 3.10)` to that rule. Do not add 3.11 to 3.13, as they only run on the daily and manual runs and would hold every pull request forever. Also check that the one-approving-review rule suits a single owner: GitHub does not let an author approve their own pull request, and the ruleset has no bypass actor.
+- [x] **Branch protection on `main`.** Done 2026-11-21 as a ruleset named "Protect Main", active: deletion and force-push are blocked, a pull request with one approving review is required, and the checks `frontend` and `tests (Python 3.10)` must pass. The owner is a bypass actor, because GitHub does not let an author approve their own pull request. 3.11 to 3.13 are not required, as they only run on the daily and manual runs and would hold every pull request forever.
 
-*Done when:* the repository is public and protection is set, including the tests. Public is done; the tests are not yet required.
+*Done when:* the repository is public and protection is set, including the tests. **Done 2026-11-21.**
 
 **Exit criteria (all required):**
 
 - [x] Phases 1.1 to 1.6 are done, or waived by the owner in this file. Done 2026-11-21: every box in 1.1 to 1.6 is ticked and each *done when* is met.
 - [x] A mission produces a findings package (upload files, findings summary, mission log) with no LaTeX needed (1.6). LaTeX is gone; the findings summary is open. Done 2026-11-21: `python main.py --simulate` into a scratch folder wrote the upload files, `findings_<night>.md` and `mission_log_<night>.md` into one `results/` folder, and the dashboard's API returned the findings with their table, caveats and checks.
-- [ ] The repository is public (1.7), and the main branch requires the tests to pass.
+- [x] The repository is public (1.7), and the main branch requires the tests to pass. Done 2026-11-21: the repository is public and the "Protect Main" ruleset requires `frontend` and `tests (Python 3.10)`.
 - [x] A person who has only read the README can say what has been run on a real telescope and what has not. Done 2026-11-21: the README was read again after the 1.5 cut and the 1.6 change. Its status block says two short visits have finished and names what has not been seen (a clean 40-frame night, a whole mission over station mode, a live AAVSO file, a transit), and the plugin table marks the two drafts and `transit_finder` as simulation only.
 
 ### Phase 2: First clean night
