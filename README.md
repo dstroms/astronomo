@@ -33,7 +33,7 @@ cd astronomo
 python3 install.py    # Python 3.10 or newer. Creates .venv, installs, writes .env, runs a fast simulation (the default plugin).
 ```
 
-`install.py` asks only for an upload identity (observer name, AAVSO code, MPC station code, site). Leave any answer blank. It does not ask for a key, and it leaves the telescope mock on. By hand: `python3 -m venv .venv`, `source .venv/bin/activate`, `pip install -r requirements.txt`, and optionally `cp .env.example .env`. Tested with Python 3.10, langgraph 1.2, photutils 2.0, astropy 6.1, fastapi 0.115.
+`install.py` asks only for an upload identity (observer name, AAVSO code, MPC station code, site). Leave any answer blank. It does not ask for a key, and it leaves the telescope mock on. By hand: `python3 -m venv .venv`, `source .venv/bin/activate`, `pip install -r requirements.txt`, and optionally `cp .env.example .env`. CI tests Python 3.10, 3.11, 3.12 and 3.13, each with a clean install of the newest libraries `requirements.txt` allows: langgraph 1.2, fastapi 0.115, and on 3.11 to 3.13 astropy 8.0 and photutils 3.x (3.10 gets astropy 6.1 and photutils 2.0, the newest that support it).
 
 ### 2. Run a simulated variable-star visit
 
@@ -55,11 +55,12 @@ Mission m_20261120_222949_1537 finished: COMPLETE
    - V1234 Lac (sim): A minimum: depth 27.8 %, duration 0.88 h, mid-time 2026-11-20 23:55 UTC, 10 comparison stars.
        cross-ref: eclipse on time: 11.300 +/- 0.030 mag, minimum at 2026-11-20 23:55 UTC.
   upload files ({'simulated': 2, ...}); none are sent, a person reviews each:
-   - [simulated] AAVSO (WebObs) variable_star_photometry: .../submissions/SIMULATED_V1234Lacsim_2026-11-20_AAVSO_Extended.txt
-  mission log: .../log/mission_log_2026-11-20.md
+   - [simulated] AAVSO (WebObs) variable_star_photometry: .../results/SIMULATED_V1234Lacsim_2026-11-20_AAVSO_Extended.txt
+  findings: .../results/findings_2026-11-20.md
+  mission log: .../results/mission_log_2026-11-20.md
 ```
 
-Output lands in `data/` (override with `ASTRONOMO_DATA_DIR`): `astronomo.sqlite` (telemetry), `checkpoints.sqlite` (LangGraph state), and per mission `missions/<id>/` with `frames/` (the FITS frames), `submissions/` (the upload files and a `manifest.json`; nothing in it has been sent) and `log/` (the Markdown mission log, which flags any anomaly at or above `ASTRONOMO_ANOMALY_MIN_SIGMA` for a person to review).
+Output lands in `data/` (override with `ASTRONOMO_DATA_DIR`): `astronomo.sqlite` (telemetry), `checkpoints.sqlite` (LangGraph state), and per mission `missions/<id>/` with `frames/` (the FITS frames) and `results/`, the one folder to open: the upload files and a `manifest.json` (nothing in it has been sent), `findings_<night>.md` (what was measured, the quoted error, what the numbers mean and what to check before sending) and `mission_log_<night>.md` (which flags any anomaly at or above `ASTRONOMO_ANOMALY_MIN_SIGMA` for a person to review).
 
 ### 4. Watch it in the dashboard (optional)
 

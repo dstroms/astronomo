@@ -10,13 +10,14 @@ questions:
 4. *Does it match what is known?*          -> :meth:`cross_reference`
 5. *What goes into the field's database?*  -> :meth:`build_submissions`
 6. *Is anything genuinely anomalous?*      -> :meth:`detect_anomalies`
-   (4-6 are optional hooks with safe defaults)
+7. *What do the numbers mean?*             -> :meth:`result_notes` and :meth:`caveats`
+   (4-7 are optional hooks with safe defaults)
 
 Astronomo takes part in collaborative (Pro-Am) science networks.  So the
 question "what should we point at?" is answered from a network's own target list where one exists
 (see :mod:`core.networks`), and a mission's product is the upload files from
-:meth:`build_submissions` plus a mission log (Markdown, built by core from the mission record, so a
-plugin does not write it).  :meth:`detect_anomalies` finds results that reach the significance bar;
+:meth:`build_submissions` plus a mission log and a findings summary (both Markdown, built by core from the
+mission record and the plugin's :meth:`result_notes` and :meth:`caveats`).  :meth:`detect_anomalies` finds results that reach the significance bar;
 they are flagged in the log for a person to review.
 
 Everything a science case needs lives in its plugin package -- including its *simulation*: the
@@ -238,6 +239,32 @@ class BaseExperimentPlugin(ABC):
         The default is no files.
         """
         return []
+
+    def result_notes(self, observation: dict) -> dict:
+        """What one observation measured, for the findings summary a person reads before sending a file.
+
+        ``observation`` is one record of ``mission["observations"]`` (``target``, ``findings``, ``crossref``).  Return
+        plain strings under any of these keys: ``measured`` (the result, with its units), ``error`` (the error that was
+        quoted for it and what that error includes and leaves out) and ``compared`` (how it compares with what is
+        already published, or that nothing was available to compare with).  Do not round an error down, and say so when
+        none is quoted.  Missing keys are filled with a plain "not given" by core.  The default reuses the one-line
+        summaries the findings and the cross-reference already carry.
+        """
+        findings = observation.get("findings") or {}
+        crossref = observation.get("crossref") or {}
+        return {"measured": findings.get("summary"), "compared": crossref.get("summary")}
+
+    def caveats(self) -> list[str]:
+        """What this science case's numbers do and do not mean, as short standing sentences.
+
+        They go into every findings summary this plugin's missions write, after the ones that hold for every
+        plugin.  Say what a person could wrongly assume (which scale a magnitude is on, what the quoted error leaves
+        out, that a lead is not a discovery).  The default admits that the plugin has not said.
+        """
+        return [
+            "This plugin has not stated what its numbers do and do not mean. "
+            "Read its page under docs/plugins/ before trusting a value."
+        ]
 
     def detect_anomalies(self, mission: dict) -> list[dict]:
         """Propose anomalies: results that stand far outside what the network's data predicts.

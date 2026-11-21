@@ -320,6 +320,9 @@ def print_outputs(final: dict) -> None:
             print(f"   - {a['target']} ({a['significance_sigma']:.1f} sigma): {a['summary']}")
     elif below:
         print(f"  {len(below)} candidate anomaly(ies) below the threshold; listed in the mission log")
+    findings = final.get("findings")
+    if findings:
+        print(f"  findings: {findings['path']}")
     mission_log = final.get("mission_log")
     if mission_log:
         print(f"  mission log: {mission_log['path']}")

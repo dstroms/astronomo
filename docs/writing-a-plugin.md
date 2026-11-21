@@ -27,7 +27,7 @@ class MyExperiment(BaseExperimentPlugin):
 
 Then `ASTRONOMO_PLUGIN=my_experiment python main.py` (or `--plugin my_experiment`). `plugins/transit_finder/`
 is a complete, tested example with a long observation, its own simulated sky and an ephemeris cross-check.
-Optional hooks with safe defaults: `build_submissions` and `detect_anomalies` (see below), `mock_scene` (what your experiment adds to the simulated sky, see below), `describe_hypothesis`, `cross_reference`, and, if you want a language model to comment on your
+Optional hooks with safe defaults: `build_submissions`, `detect_anomalies`, and `result_notes` with `caveats` (see below), `mock_scene` (what your experiment adds to the simulated sky, see below), `describe_hypothesis`, `cross_reference`, and, if you want a language model to comment on your
 results, `summarize_for_llm` / `llm_guidance` (see [Language models](models.md#language-models-optional)). The full contract, with the dict shapes, is the module
 docstring of `core/base_plugin.py`. `tests/test_graph.py::test_core_runs_an_unrelated_plugin_with_default_hooks`
 runs a non-asteroid toy plugin through the whole graph, which is the proof the core is agnostic.
@@ -86,6 +86,13 @@ them (your report's `label`, and an optional one-sentence `summary`); a single r
 only those at or above `ANOMALY_MIN_SIGMA` (the rest appear in the mission log as below threshold), so report honest, finite
 significances, include a systematic floor where there is one, and give a measurement you cannot trust (a wrong star, say) a
 significance of 0 with the measured value in `evidence`. An accepted anomaly is flagged in the mission log for a person to review; nothing is written up.
+
+**What the numbers mean.** Core writes a findings summary beside the upload files, and only your plugin knows what its numbers mean.
+`result_notes(observation)` returns plain strings for one observation: `measured` (the result with its units), `error` (the error you
+quoted and what it includes and leaves out) and `compared` (how it compares with what is published, or that nothing was available).
+`caveats()` returns the standing sentences a person could get wrong (which scale a magnitude is on, what the error leaves out, that a
+lead is not a discovery). The default `caveats` admits that the plugin has not said, and `tests/test_findings.py` fails for a shipped
+plugin that stays silent. Do not round an error down, and say so when none is quoted.
 
 ## Supporting real data (optional)
 

@@ -1,6 +1,6 @@
 # Architecture and layout
 
-How the code is organised, how a mission runs, what a mission produces (upload files and a mission log) and what is stored. The README has a smaller diagram of the overall shape ([How it fits together](../README.md#how-it-fits-together)).
+How the code is organised, how a mission runs, what a mission produces (upload files, a findings summary and a mission log, in one folder) and what is stored. The README has a smaller diagram of the overall shape ([How it fits together](../README.md#how-it-fits-together)).
 
 ## The overall shape
 
@@ -86,8 +86,8 @@ flowchart TD
 | `reduce_data`         | `plugin.analyze_frames(fits_paths)` → structured findings.                                                                                                                       |
 | `cross_reference`     | `plugin.cross_reference(findings, catalogs, target)`; catalog outages are recorded, not fatal.                                                                                   |
 | `screen_anomalies`    | `plugin.detect_anomalies()` proposes leads with a significance in sigma; **core** keeps only those at or above `ANOMALY_MIN_SIGMA`, so a plugin cannot talk itself into raising an alarm. |
-| `package_submission`  | `plugin.build_submissions()` → upload files + `manifest.json` in `submissions/`. A draft with missing information is held back or marked `DRAFT_`; nothing is sent.              |
-| `write_log`           | Writes the **mission log** as Markdown (no model-written text), including any anomaly flagged for a person to review.                                                            |
+| `package_submission`  | `plugin.build_submissions()` → upload files + `manifest.json` in `results/`. A draft with missing information is held back or marked `DRAFT_`; nothing is sent.                |
+| `write_log`           | Writes the **mission log** and the **findings summary** as Markdown into `results/` (no model-written text), including any anomaly flagged for a person to review.               |
 
 Archive missions skip `check_weather` (a survey's conditions are part of its data) and wait on the replay clock instead. See
 [Real data and long cadences](real-data.md).
@@ -118,6 +118,7 @@ core/
   submission.py        SubmissionDraft + writing upload files: status, SIMULATED_/REPLAY_/DRAFT_ prefixes, manifest.json (never sends)
   anomaly.py           the anomaly screen (threshold enforced here, not by plugins) and the flags for a person to review
   mission_log.py       the automated mission log (a document spec built only from the mission record; no model text)
+  findings.py          the findings summary: the plugin's measured value, quoted error and caveats, plus the checks before sending
 plugins/
   __init__.py          registry: load_plugin(name) -> instance (no core imports a concrete plugin)
   asteroid_finder/     example plugin: plugin.py = interface (and ADES drafts), reduction.py = detection,
@@ -145,6 +146,7 @@ tools/
   mock_sky.py          generic synthetic sky (stars, noise, WCS) + the SkyScene hook plugins fill in
 writer/
   markdown_writer.py   renders the mission log's document spec as a Markdown file plus a figures/ folder
+  findings_writer.py   renders the findings spec as a Markdown page with the finder image
 db/                    SQLAlchemy models (Mission, Target, Observation, Artifact, PlannedObservation, + telemetry) & repo
 dashboard/api/         versioned HTTP API (`/api/v1`) and the bundled React UI from `frontend/dist`; does not talk to the telescope
 dashboard/first_frame.py  first-frame picture and setup-check copy (reads missions/<id>/first_frame.png)
@@ -177,15 +179,21 @@ own repo. If `frontend/dist` is missing, `python -m dashboard.api` is still the 
 
 ## What a mission produces
 
-A mission ends with, in `missions/<id>/`:
+A mission ends with one folder a person opens, `missions/<id>/results/` (the frames stay beside it in `frames/`):
 
-- `submissions/`: the upload files and `manifest.json`. Core, not the plugin, decides each file's status:
+- The upload files and `manifest.json`. Core, not the plugin, decides each file's status:
   `simulated`, `replay`, `draft` (a blocker is listed), `ready_for_review` or `held` (no file written). Simulated and replayed
   data can never be `ready_for_review`, file names carry `SIMULATED_`/`REPLAY_`/`DRAFT_`, and `sent` is always `false`.
-- `log/mission_log_<night>.md`: the mission log, always, as Markdown with a `figures/` folder beside it. It lists each target with
+- `findings_<night>.md`: the findings summary. What each observation measured, the error that was quoted for it, how it compares with
+  what is already published, the first frame as a finder image, what the plugin's numbers do and do not mean, and a list of what a
+  person must check before sending. The numbers and the caveats are the plugin's words (`result_notes` and `caveats`); core adds the
+  checks that hold for every mission. It contains no model-written text.
+- `mission_log_<night>.md`: the mission log, always, as Markdown with a `figures/` folder beside it. It lists each target with
   its network, task and reason, what each observation found, the files and their blockers, and the anomaly screen's result
   (including what fell below the threshold, as leads for a person to check). It contains no model-written text, and carries the
   credit line for any replayed public data set.
+
+Missions run before 2026-11-21 keep the old layout (`submissions/` and `log/`); the dashboard finds their files through the database.
 
 An anomaly is a flag in the mission log.
 
@@ -205,7 +213,7 @@ same file as a download.
 ## Telemetry
 
 Everything the dashboard shows is in SQLite (WAL mode, safe to read while a mission writes), except the live first-frame view: that PNG is written into the mission folder the moment the frame is on disk, and a UI reads the file so the operator sees it before the next exposure. The rest is in SQLite:
-missions, targets, observations, artifacts (one row per upload file and per mission log), weather readings, and a `log_events` stream containing node
+missions, targets, observations, artifacts (one row per upload file, per findings summary and per mission log), weather readings, and a `log_events` stream containing node
 start/end/error markers plus all Astronomo log lines emitted while a node runs. `planned_observations` holds the notes a person made on the
 Opportunities page (a target, its window, why, and the estimate shown at the time) and follow a life cycle: `PLANNED`, then `STARTED` (linked to
 the mission built from it with `main.py --from-plan`, from the terminal or from a confirmed button on the Plans page), then `DONE` or `MISSED`; or `CANCELLED`. The Plans page lists every plan. `main.py --schedule` lists due plans and resumes a weather wait. It starts a plan only with `--confirm`. Self-start stays off until the mount has been confirmed.

@@ -648,6 +648,62 @@ class TransitFinderPlugin(BaseExperimentPlugin):
         night = mission.get("night") or "unknown-night"
         return [self._aavso_draft(rec, night) for rec in mission.get("observations", [])]
 
+    def result_notes(self, observation: dict) -> dict:
+        """The fitted transit (or the lack of one), its quoted errors and the comparison with the ephemeris."""
+        findings = observation.get("findings") or {}
+        xref = observation.get("crossref") or {}
+        det = (findings.get("detections") or [None])[0]
+        exp = xref.get("expected") or {}
+        nd = xref.get("non_detection") or {}
+        entry = (xref.get("entries") or [{}])[0] or {}
+        if not det:
+            return {
+                "measured": nd.get("text") or findings.get("summary") or "No transit detected.",
+                "error": (
+                    f"A 3-sigma depth upper limit of {nd['depth_upper_limit_3sigma_pct']:.2f} %."
+                    if nd.get("depth_upper_limit_3sigma_pct") is not None else "None: no transit was measured."
+                ),
+                "compared": (
+                    f"The catalogue expects a {exp['depth_pct']:.2f} % transit here."
+                    if exp.get("depth_pct") else "No transit was expected in this window."
+                ),
+            }
+        measured = (
+            f"Mid-time {str(det.get('epoch_mid_iso') or '')[:16].replace('T', ' ')} UTC; depth {det['depth_pct']:.2f} %; "
+            f"duration {det['duration_h']:.2f} h. Depth is differential and instrumental."
+        )
+        error = (
+            f"Mid-time +/- {det['t_mid_err_min']:.1f} min; depth +/- {det['depth_err_pct']:.2f} %. These come from the "
+            "fit, inflated for excess and time-correlated noise. Aperture and blending systematics are not in them."
+        )
+        parts = []
+        if entry.get("classification"):
+            parts.append(str(entry["classification"]).replace("_", " "))
+        if entry.get("t_mid_residual_min") is not None and exp.get("t_mid_iso"):
+            parts.append(
+                f"mid-time {float(entry['t_mid_residual_min']):+.1f} min from the predicted "
+                f"{exp['t_mid_iso'][:16].replace('T', ' ')} UTC (predicted error +/- {float(exp.get('t_mid_err_min') or 0):.1f} min)"
+            )
+        if entry.get("depth_ratio") is not None:
+            parts.append(f"depth {float(entry['depth_ratio']):.2f} of the catalogue depth")
+        ident = (xref.get("identity") or {}).get("status")
+        if ident:
+            parts.append(f"star identity {ident}")
+        return {"measured": measured, "error": error, "compared": "; ".join(parts) + "." if parts else None}
+
+    def caveats(self) -> list[str]:
+        return [
+            "Transit depth is differential and instrumental. The aperture and blended neighbours change it, and neither is in "
+            "the quoted error. Depth and duration disagreement is not screened for that reason.",
+            "The predicted mid-time comes from whichever list (ExoClock or NASA Exoplanet Watch) gave the smaller timing "
+            "uncertainty, carried forward to this night. A mid-time offset may be a stale ephemeris, not a timing variation.",
+            "Re-detecting a known planet is a measurement, not a discovery. An unexpected dip may be a blend or an "
+            "eclipsing binary. The fit is a trapezoid, not a limb-darkened model.",
+            "Times are mid-exposure converted from UTC to BJD_TDB. The exposure-start time against a real clock has not "
+            "been confirmed on the Seestar, so the timing error is unmeasured on this telescope.",
+            "No transit has been measured with this plugin on a real telescope or on archive data yet.",
+        ]
+
     def _aavso_draft(self, rec: dict, night: str) -> SubmissionDraft:
         target, findings, xref = rec["target"], rec.get("findings") or {}, rec.get("crossref") or {}
         planet = target.get("planet") or target["name"]

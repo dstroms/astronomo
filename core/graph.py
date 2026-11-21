@@ -84,6 +84,7 @@ from core.clock import Clock, ReplayClock, SystemClock, clock_from_state, parse_
 from core.digest import scalars_only, short
 from core.frame_watch import FrameWatcher, format_row, save_stats
 from core.llm import LLM_ERRORS, LLMClient, LLMResponse
+from core import findings as findings_page
 from core.mission_log import build_log, with_preview
 from core.readiness import dew_point_c, disk_reading
 from core.retry import backoff_delay, is_transient
@@ -99,7 +100,7 @@ from tools.autofocus import IMPROVED, NO_IMPROVEMENT, run_autofocus
 from tools.catalogs import CatalogClient
 from tools.telescope import SeestarController, StopRequested, TelescopeError, slugify
 from tools.weather import WeatherClient, WeatherUnavailable, saved_hours
-from writer import LogWriter
+from writer import LogWriter, write_findings
 
 log = logging.getLogger(__name__)
 
@@ -927,6 +928,11 @@ def screen_anomalies(rt: AstronomoRuntime, state: MissionState) -> dict:
     return _aborted_update(state, update, errors)
 
 
+def _results_dir(rt: AstronomoRuntime, state: MissionState) -> Path:
+    """The one folder a person opens after a mission: upload files, findings summary and mission log together."""
+    return rt.settings.missions_dir / state["mission_id"] / "results"
+
+
 def package_submission(rt: AstronomoRuntime, state: MissionState) -> dict:
     """Write the plugin's upload files (the default product) plus a manifest.  Never sends anything.
 
@@ -944,7 +950,7 @@ def package_submission(rt: AstronomoRuntime, state: MissionState) -> dict:
         log.exception("build_submissions failed")
         drafts = []
         errors.append(f"package_submission: build_submissions failed: {exc}")
-    out_dir = rt.settings.missions_dir / state["mission_id"] / "submissions"
+    out_dir = _results_dir(rt, state)
     records = submission_files.write_submissions(
         drafts, out_dir,
         mission_id=state["mission_id"],
@@ -966,7 +972,7 @@ def package_submission(rt: AstronomoRuntime, state: MissionState) -> dict:
     log.info("Submissions: %s", submission_files.summarize(records))
     update = {
         "submissions": records,
-        "submissions_dir": str(out_dir),
+        "results_dir": str(out_dir),
         "status": MissionStatus.PACKAGING.value,
     }
     return _aborted_update(state, update, errors)
@@ -994,7 +1000,7 @@ def write_log(rt: AstronomoRuntime, state: MissionState) -> dict:
         },
     }
     basename = f"mission_log_{mission['night']}"
-    out_dir = rt.settings.missions_dir / state["mission_id"] / "log"
+    out_dir = _results_dir(rt, state)
     result = rt.writer.write(build_log(mission), meta, out_dir, basename=basename)
     rt.db.replace_artifacts(
         state["mission_id"], "mission_log",
@@ -1002,8 +1008,27 @@ def write_log(rt: AstronomoRuntime, state: MissionState) -> dict:
     )
     for note in result.notes:
         log.warning("Mission log: %s", note)
+    update: dict[str, Any] = {"mission_log": result.as_dict(), "status": final, "results_dir": str(out_dir)}
+    # The findings summary sits beside the log. It must never cost the mission its log, so a failure is recorded, not raised.
+    try:
+        rows, problems = findings_page.collect_rows(rt.plugin, mission.get("observations") or [])
+        caveats, caveat_problems = findings_page.collect_caveats(rt.plugin)
+        spec = findings_page.build_findings(mission, rows=rows, caveats=caveats, log_name=Path(result.path).name)
+        page = write_findings(spec, out_dir, basename=f"findings_{mission['night']}")
+        rt.db.replace_artifacts(
+            state["mission_id"], "findings",
+            [{"title": page.title, "path": page.path, "status": "written",
+              "meta": {"notes": page.notes, **findings_page.summary_payload(spec)}}],
+        )
+        update["findings"] = page.as_dict()
+        errors = [*problems, *caveat_problems]
+    except Exception as exc:  # noqa: BLE001
+        log.exception("findings summary failed")
+        errors = [f"write_log: the findings summary could not be written: {exc}"]
+    if errors and not aborted:  # on an ABORTED mission `errors` would overwrite the real abort reason
+        update["errors"] = errors
     # An aborted mission (e.g. weather) still writes its log, but stays ABORTED.
-    return {"mission_log": result.as_dict(), "status": final}
+    return update
 
 
 NODE_FUNCS: dict[str, Callable[[AstronomoRuntime, MissionState], dict]] = {

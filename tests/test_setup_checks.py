@@ -350,7 +350,7 @@ def test_a_good_first_frame_is_checked_once_and_logged(settings):
         frames = sorted((mission_dir / "frames").rglob("frame_*.fits"), key=lambda p: (p.stat().st_mtime, str(p)))
         assert len(frames) > 1
         assert preview.stat().st_mtime <= frames[1].stat().st_mtime  # the view exists before the next exposure
-        log = next((mission_dir / "log").glob("*.md"))
+        log = next((mission_dir / "results").glob("mission_log_*.md"))
         assert "stretched" in log.read_text()
         assert len(final["observations"]) == 2
     finally:
