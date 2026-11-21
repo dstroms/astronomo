@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Safety or security problem (private)
+    url: https://github.com/dstroms/astronomo/security/advisories/new
+    about: An interlock that did not hold, a command that could move the telescope unsafely, or a leaked secret. Please do not post these in a public issue.
+  - name: Read the contributing guide
+    url: https://github.com/dstroms/astronomo/blob/main/CONTRIBUTING.md
+    about: Ground rules, setup, and how to help.

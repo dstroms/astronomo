@@ -1,0 +1,83 @@
+name: First-light report (a run on a real telescope)
+description: Tell us what happened on a real Seestar, including what broke. This is the most useful report there is.
+title: "First light: <telescope, firmware, one-line result>"
+labels: ["first-light"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you. A Seestar S50 Pro has connected over Alpaca (2026-11-13) and no mission has finished, so every detail of a later run still helps.
+
+        **Supervise every run, and never point a telescope at or near the Sun.**
+        Please remove your **location, observer name, AAVSO or MPC codes and network addresses** before you post.
+        If you found a *safety* problem (an interlock that did not hold), do **not** post it here: use the private report link on the issue chooser.
+  - type: input
+    id: version
+    attributes:
+      label: Astronomo version
+      description: The commit hash (`git rev-parse --short HEAD`).
+    validations:
+      required: true
+  - type: input
+    id: telescope
+    attributes:
+      label: Telescope and firmware
+      description: Model (S50, S30, ...), the firmware version shown in the Seestar app, and the app version.
+      placeholder: "S50, firmware ____, app ____"
+    validations:
+      required: true
+  - type: textarea
+    id: hardware_check
+    attributes:
+      label: Output of `python main.py --hardware-check`
+      description: Paste the printed report (or the saved file in `data/hardware_checks/`). Say if it could not connect, and what it printed.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: unconfirmed
+    attributes:
+      label: The "unconfirmed" table
+      description: >
+        The Alpaca table in docs/first-light/05-first-light-checklist.md. Fill in whatever you saw for each blank
+        row (focus and pointing, field rotation, frame statistics, magnitude reached, timing error, the interlocks,
+        Bayer pattern, lastexposurestarttime, and the open parts of rows 18 and 21). "Did not get that far" is a
+        useful answer.
+    validations:
+      required: true
+  - type: dropdown
+    id: how_far
+    attributes:
+      label: How far did the supervised run get?
+      options:
+        - Could not connect
+        - Connected, hardware check failed
+        - Hardware check passed, no mission
+        - Mission started, stopped at the setup checks
+        - Mission captured frames but reduction failed
+        - Mission finished, result disagrees with the known answer
+        - Mission finished, result agrees with the known answer
+    validations:
+      required: true
+  - type: textarea
+    id: broke
+    attributes:
+      label: What broke, and what the telescope actually replied
+      description: What the telescope or the software said, not what you expected. Paste the relevant log lines.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: target
+    attributes:
+      label: Target and known answer
+      description: What you observed and what it should have shown (for a transit, the published mid-time).
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Before you submit
+      options:
+        - label: I removed my location, name, codes and network addresses (or they are not needed).
+          required: true
+        - label: This is not a safety problem. (Those go through the private report link.)
+          required: true

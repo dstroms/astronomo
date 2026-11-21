@@ -1,0 +1,80 @@
+name: tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    # 13:00 UTC is 06:00 Mountain Standard Time, and 07:00 when daylight saving is in effect.
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A new push or pull request replaces the run still going for that ref. A scheduled run
+# has its own group, so a push leaves the daily suite alone.
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Render the React UI
+        working-directory: frontend
+        run: |
+          set -euo pipefail
+          npm ci
+          npm test
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Choose the suite
+        id: choose
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          suite=quick
+          if [ "$EVENT_NAME" = "schedule" ] || [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            suite=full
+          elif [ "$EVENT_NAME" = "push" ]; then
+            if [ -z "${BEFORE:-}" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+              suite=full
+            else
+              git diff --name-only "$BEFORE" HEAD > "$RUNNER_TEMP/changed"
+              if grep -Eq '(^|/)[^/]+\.py$|^requirements\.txt$|^pytest\.ini$|^\.github/workflows/tests\.yml$' "$RUNNER_TEMP/changed"; then
+                suite=full
+              fi
+            fi
+          fi
+          echo "suite=$suite" >> "$GITHUB_OUTPUT"
+          echo "Running the $suite suite"
+      - name: Run the suite
+        env:
+          SUITE: ${{ steps.choose.outputs.suite }}
+        run: |
+          set -euo pipefail
+          if [ "$SUITE" = "full" ]; then
+            pytest -n auto -rs
+          else
+            pytest -n auto -m "not slow" -rs
+          fi

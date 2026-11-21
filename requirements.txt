@@ -1,0 +1,32 @@
+# The canonical list is pyproject.toml. These lines are the same minimums, so
+# `pip install -r requirements.txt` and `pip install -e ".[dev]"` install one set.
+# A test checks that the two files still name the same packages.
+
+# Orchestration
+langgraph>=0.2.60
+langgraph-checkpoint-sqlite>=2.0
+
+# Persistence
+SQLAlchemy>=2.0
+
+# Scientific stack
+numpy>=1.26
+scipy>=1.11
+matplotlib>=3.8
+astropy>=6.0
+photutils>=1.12
+astroquery>=0.4.7
+
+# Services
+requests>=2.31
+
+# Dashboard (FastAPI + shipped React UI; Plotly figures in plugin evidence)
+plotly>=5.20
+fastapi>=0.115,<0.116
+uvicorn>=0.32
+httpx>=0.27
+
+# Tests (the "dev" extra in pyproject.toml)
+pytest>=8.0
+pytest-xdist>=3.5      # runs the suite on every core: pytest -n auto
+PyYAML>=6.0            # the issue-form test imports it

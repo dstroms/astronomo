@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "astronomo"
+version = "0.1.0"
+description = "Supervised observing missions for a Seestar, from a network target list to an upload file a person reviews."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+dependencies = [
+    "langgraph>=0.2.60",
+    "langgraph-checkpoint-sqlite>=2.0",
+    "SQLAlchemy>=2.0",
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "matplotlib>=3.8",
+    "astropy>=6.0",
+    "photutils>=1.12",
+    "astroquery>=0.4.7",
+    "requests>=2.31",
+    "plotly>=5.20",
+    "fastapi>=0.115,<0.116",
+    "uvicorn>=0.32",
+    "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-xdist>=3.5",
+    "PyYAML>=6.0",
+]
+
+[project.scripts]
+astronomo = "main:cli"
+
+[tool.setuptools]
+py-modules = ["main", "config"]
+
+[tool.setuptools.packages.find]
+include = ["core*", "db*", "tools*", "writer*", "dashboard*", "plugins*"]
+exclude = ["tests*"]
