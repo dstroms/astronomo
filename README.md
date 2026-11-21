@@ -33,7 +33,7 @@ cd astronomo
 python3 install.py    # Python 3.10 or newer. Creates .venv, installs, writes .env, runs a fast simulation (the default plugin).
 ```
 
-`install.py` asks only for an upload identity (observer name, AAVSO code, MPC station code, site). Leave any answer blank. It does not ask for a key, and it leaves the telescope mock on. By hand: `python3 -m venv .venv`, `source .venv/bin/activate`, `pip install -r requirements.txt`, and optionally `cp .env.example .env`. CI tests Python 3.10, 3.11, 3.12 and 3.13, each with a clean install of the newest libraries `requirements.txt` allows: langgraph 1.2, fastapi 0.115, and on 3.11 to 3.13 astropy 8.0 and photutils 3.x (3.10 gets astropy 6.1 and photutils 2.0, the newest that support it).
+`install.py` asks only for an upload identity (observer name, AAVSO code, MPC station code, site). Leave any answer blank. It does not ask for a key, and it leaves the telescope mock on. By hand: `python3 -m venv .venv`, `source .venv/bin/activate`, `pip install -r requirements.txt`, and optionally `cp .env.example .env`. CI tests Python 3.10, 3.11, 3.12 and 3.13 every day (pull requests run 3.10), each with a clean install of the newest libraries `requirements.txt` allows: langgraph 1.2, fastapi 0.115, and on 3.11 to 3.13 astropy 8.0 and photutils 3.x (3.10 gets astropy 6.1 and photutils 2.0, the newest that support it).
 
 ### 2. Run a simulated variable-star visit
 
@@ -64,7 +64,7 @@ Output lands in `data/` (override with `ASTRONOMO_DATA_DIR`): `astronomo.sqlite`
 
 ### 4. Watch it in the dashboard (optional)
 
-Astronomo does not need a browser; step 2 is a complete run. To watch and to plan, run `python -m dashboard.api` in a second terminal and open [http://localhost:8765](http://localhost:8765). It serves the HTTP API (`/api/v1`) and the bundled React UI (no Node needed unless you change the React source). The pages are in [the dashboard guide](docs/dashboard.md), and the API contract is [docs/api.md](docs/api.md).
+Astronomo does not need a browser; step 2 is a complete run. To watch and to plan, run `python -m dashboard.api` in a second terminal and open [http://localhost:8765](http://localhost:8765) (it opens for you, and prints the address if another program has that port and it has to use the next one). It serves the HTTP API (`/api/v1`) and the bundled React UI (no Node needed unless you change the React source). The pages are in [the dashboard guide](docs/dashboard.md), and the API contract is [docs/api.md](docs/api.md).
 
 ### 5. Before any real upload
 

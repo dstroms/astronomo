@@ -294,6 +294,7 @@ function Lead({ data }: { data: any }) {
   const row = data.row || {};
   const summary = data.summary || {};
   const arts = (data.artifacts?.submissions || [])[0];
+  const findings = (data.artifacts?.findings || [])[0];
   const slot = summary.verdict === "good" ? "green" : summary.verdict === "attention" ? "orange" : "blue";
   if (row.state === "ORPHANED" || row.state === "PAUSED") {
     return (
@@ -334,6 +335,9 @@ function Lead({ data }: { data: any }) {
             {arts.downloadable ? <div style={{ margin: "10px 0 8px" }}><a className="btn primary" href={`/api/v1/artifacts/${arts.id}`}>Download {arts.filename}</a></div> : null}
           </>
         ) : <div className="muted small" style={{ marginTop: 8 }}>None yet.</div>}
+        {findings?.downloadable ? (
+          <div className="small" style={{ margin: "0 0 8px" }}>Read the <a href={`/api/v1/artifacts/${findings.id}`}>findings summary</a> before you send anything.</div>
+        ) : null}
         <div className="small muted">Nothing is sent anywhere: you review each file and upload it yourself.</div>
       </div>
     </div>

@@ -37,6 +37,44 @@ def ui_url(host: str, port: int) -> str:
     return f"http://{shown}:{port}"
 
 
+def port_in_use(port: int) -> bool:
+    """True when anything already answers on this port, on IPv4 or IPv6 loopback.
+
+    Binding next to a wildcard listener succeeds on macOS, but `localhost` then reaches the other
+    program, so the check is a connect and not a bind.
+    """
+    import errno
+    import socket
+
+    # A refused connection means free. A connection that is accepted, or that stalls because a
+    # listener's queue is full, means something is there.
+    busy = {0, errno.EAGAIN, errno.ETIMEDOUT, errno.EWOULDBLOCK}
+    for family, address in ((socket.AF_INET, "127.0.0.1"), (socket.AF_INET6, "::1")):
+        try:
+            with socket.socket(family, socket.SOCK_STREAM) as probe:
+                probe.settimeout(0.3)
+                if probe.connect_ex((address, port)) in busy:
+                    return True
+        except (OSError, socket.timeout):
+            continue
+    return False
+
+
+def choose_port(port: int, *, explicit: bool, tries: int = 20) -> int:
+    """The port to serve on. A port the user asked for is used or refused; the default moves up to the next free one."""
+    if not port_in_use(port):
+        return port
+    if explicit:
+        raise SystemExit(
+            f"Port {port} is already in use by another program. Stop it, or choose another port "
+            "with --port or ASTRONOMO_API_PORT."
+        )
+    for candidate in range(port + 1, port + 1 + tries):
+        if not port_in_use(candidate):
+            return candidate
+    raise SystemExit(f"Ports {port} to {port + tries} are all in use. Choose one with --port or ASTRONOMO_API_PORT.")
+
+
 def _open_browser(url: str) -> None:
     import threading
     import webbrowser
@@ -466,14 +504,20 @@ def main() -> None:
 
     parser = argparse.ArgumentParser(description="Astronomo HTTP API and bundled UI (http://localhost:8765).")
     parser.add_argument("--host", default=os.environ.get("ASTRONOMO_API_HOST", "127.0.0.1"))
-    parser.add_argument("--port", type=int, default=int(os.environ.get("ASTRONOMO_API_PORT", DEFAULT_PORT)))
+    parser.add_argument("--port", type=int, default=None, help=f"Default {DEFAULT_PORT}, or the next free port if that is taken.")
     parser.add_argument("--no-browser", action="store_true", help="Do not open the UI in a browser.")
     args = parser.parse_args()
-    url = ui_url(args.host, args.port)
+    env_port = os.environ.get("ASTRONOMO_API_PORT", "").strip()
+    explicit = args.port is not None or bool(env_port)
+    wanted = args.port if args.port is not None else int(env_port or DEFAULT_PORT)
+    port = choose_port(wanted, explicit=explicit)
+    if port != wanted:
+        print(f"\n  Port {wanted} is in use by another program, so the dashboard is using {port}.", flush=True)
+    url = ui_url(args.host, port)
     print(f"\n  Local URL: {url}\n", flush=True)
     if _want_browser(no_browser=args.no_browser):
         _open_browser(url)
-    uvicorn.run("dashboard.api.app:create_app", factory=True, host=args.host, port=args.port, reload=False)
+    uvicorn.run("dashboard.api.app:create_app", factory=True, host=args.host, port=port, reload=False)
 
 
 if __name__ == "__main__":

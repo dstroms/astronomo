@@ -25,7 +25,7 @@ These are the project's promises, and a change that breaks one will not be merge
 
 ## Getting set up
 
-Python 3.10 or newer (CI runs 3.10, 3.11, 3.12 and 3.13; day-to-day development is on 3.10). No hardware, API key or cost is needed. The [README quick start](README.md#quick-start) is `python3 install.py`. The commands below are that install without questions, plus the test suite.
+Python 3.10 or newer (a pull request runs 3.10; the daily run covers 3.10, 3.11, 3.12 and 3.13). No hardware, API key or cost is needed. The [README quick start](README.md#quick-start) is `python3 install.py`. The commands below are that install without questions, plus the test suite.
 
 ```bash
 cd astronomo

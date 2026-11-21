@@ -116,7 +116,7 @@ Self-start stays off. Nothing in the repository sets `ASTRONOMO_UNATTENDED_CONFI
 | `ASTRONOMO_ANOMALY_MIN_SIGMA` | `5.0` | Significance an anomaly needs to be flagged in the mission log, enforced in core (`--anomaly-sigma` overrides) |
 | `ASTRONOMO_NETWORK_CACHE_TTL_H` | `24` | How long ExoClock / Exoplanet Watch / NASA TTV lists are reused before a refetch (the MPC NEOCP is capped at 1 h). An expired copy is still used, flagged stale, if the fetch fails |
 | `ASTRONOMO_DATA_DIR` | `./data` | Storage |
-| `ASTRONOMO_API_HOST` / `_API_PORT` | `127.0.0.1` / `8765` | Bind address for `python -m dashboard.api`. The UI is http://localhost:8765 |
+| `ASTRONOMO_API_HOST` / `_API_PORT` | `127.0.0.1` / `8765` | Bind address for `python -m dashboard.api`. The UI is http://localhost:8765. If another program holds the default port, the dashboard uses the next free one and prints it; a port you set yourself that is taken stops it with a message |
 | `ASTRONOMO_API_CORS` | `*` | CORS origins for that API, comma-separated, or `*` |
 | `ASTRONOMO_DATA_SOURCE` | `telescope` | `telescope` \| `archive` (replay a real public data set; `--data-source` overrides) |
 | `ASTRONOMO_REPLAY_SPEED` | `0` | Archive replay: survey seconds per wall second. `0` = jump between visits, `1` = real time, `3600` = one survey hour per second |

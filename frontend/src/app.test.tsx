@@ -193,6 +193,7 @@ test("Documents shows the findings summary with its caveats and checks", async (
   );
   renderAt("/missions/m_done");
   expect(await screen.findByRole("heading", { name: "Field B" })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "findings summary" })).toHaveAttribute("href", "/api/v1/artifacts/7");
   fireEvent.click(screen.getByRole("button", { name: "Documents" }));
   expect(screen.getByText("Findings summary")).toBeInTheDocument();
   expect(screen.getByText("+/- 0.031 mag")).toBeInTheDocument();
