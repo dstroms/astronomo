@@ -166,6 +166,42 @@ test("a mission page renders without throwing", async () => {
   expect(screen.getByText("The plan")).toBeInTheDocument();
 });
 
+test("Documents shows the findings summary with its caveats and checks", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (input: RequestInfo | URL) => {
+      const path = pathnameOf(input);
+      if (path === "/api/v1/shell") return ok(SHELL);
+      if (path === "/api/v1/missions/m_done") {
+        return ok({
+          ...MISSION,
+          artifacts: {
+            findings: [{
+              id: 7, title: "Findings, 2026-11-21: variable_stars", status: "written", downloadable: true,
+              filename: "findings_2026-11-21.md",
+              rows: [{ target: "V1234 Lac", measured: "11.300 mag", error: "+/- 0.031 mag", compared: "eclipse on time" }],
+              caveats: ["The magnitude is a camera green magnitude."],
+              checks: ["Open each upload file and read it."],
+            }],
+            submissions: [], mission_logs: [], notice: "",
+          },
+        });
+      }
+      if (path === "/api/v1/missions/m_done/frames") return ok({ frames: [] });
+      return new Response(JSON.stringify({ detail: path }), { status: 404 });
+    }),
+  );
+  renderAt("/missions/m_done");
+  expect(await screen.findByRole("heading", { name: "Field B" })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "findings summary" })).toHaveAttribute("href", "/api/v1/artifacts/7");
+  fireEvent.click(screen.getByRole("button", { name: "Documents" }));
+  expect(screen.getByText("Findings summary")).toBeInTheDocument();
+  expect(screen.getByText("+/- 0.031 mag")).toBeInTheDocument();
+  expect(screen.getByText("The magnitude is a camera green magnitude.")).toBeInTheDocument();
+  expect(screen.getByText("Open each upload file and read it.")).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: /Download findings_2026-11-21\.md/ })).toBeInTheDocument();
+});
+
 test("Process shows language-model traffic", async () => {
   renderAt("/missions/m_done");
   expect(await screen.findByRole("heading", { name: "Field B" })).toBeInTheDocument();

@@ -566,6 +566,38 @@ class RubinFollowupPlugin(BaseExperimentPlugin):
     def _jd(iso: str) -> float:
         return float(Time(_parse(iso)).jd)  # UTC Julian date, as the AAVSO Extended format asks
 
+    def result_notes(self, observation: dict) -> dict:
+        """The magnitude (or the limit it was not seen at), its error and how it compares with Rubin's own light curve."""
+        xref = observation.get("crossref") or {}
+        meas = xref.get("measurement") or {}
+        limit = meas.get("limit_mag_5sigma")
+        if meas.get("mag") is not None:
+            measured = f"G ~ {float(meas['mag']):.2f} mag on the Gaia G scale"
+            if meas.get("snr") is not None:
+                measured += f" (SNR {float(meas['snr']):.0f})"
+            error = (
+                f"+/- {float(meas['mag_err']):.2f} mag: the stack's statistical error and the zero-point scatter. "
+                "No colour term is applied, so a colour-dependent systematic of a few tenths of a magnitude is not in it."
+            ) if meas.get("mag_err") is not None else "No error was quoted for this magnitude."
+        elif limit is not None:
+            measured = f"Not detected. The 5-sigma limit is G ~ {float(limit):.1f} mag. This is an upper limit, not a measurement."
+            error = "None: an upper limit has no error."
+        else:
+            measured = "No measurement was made."
+            error = "None: nothing was measured."
+        return {"measured": measured, "error": error, "compared": xref.get("summary")}
+
+    def caveats(self) -> list[str]:
+        return [
+            "This plugin is a draft and has not run live: the alert stream was dark when it was written.",
+            "Most Rubin alerts are fainter than a 50 mm telescope reaches. A signal near the limit is marginal, and an "
+            "upper limit must never be described as a measurement.",
+            "The magnitude is on the Gaia G scale through a zero point, with no colour term, so it carries a "
+            "colour-dependent systematic of a few tenths of a magnitude. It is not transformed to another band.",
+            "The screen only looks for an outburst. It does not look for fading or a disappearance, and an outburst flag "
+            "is a lead for a person to check, not a discovery.",
+        ]
+
     def build_submissions(self, mission: dict) -> list[SubmissionDraft]:
         """One AAVSO Extended report per observed alert: a magnitude if the source was measured, else a fainter-than limit.
 

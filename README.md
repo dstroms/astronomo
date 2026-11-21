@@ -9,7 +9,7 @@ Astronomo is a free, open-source, auditable pipeline that runs a small telescope
 
 The aim is the full scientific loop: **propose** what to observe, **observe** it, **analyze** the data, **test** the findings, then **submit** or **rework** and go round again. A language model takes on that loop one small, checked decision at a time, and the safety interlocks always stay in code. [The roadmap](ROADMAP.md#phases) says which phase delivers which step.
 
-The modest aim for one telescope is narrower, and it is what is built today: **take part in the networks, not rediscover what is known.** A 50 mm telescope supplies what the networks are short of, so Astronomo takes targets from their own lists: the AAVSO Target Tool (variable-star magnitudes), [ExoClock](https://www.exoclock.space/) and [NASA Exoplanet Watch](https://exoplanets.nasa.gov/exoplanet-watch/) (transit times), the [Minor Planet Center](https://minorplanetcenter.net/)'s NEO Confirmation Page and public Rubin alerts. Only the variable-star and transit plugins are meant for use. The **default product is a database-ready upload file** (AAVSO or ADES) that a person reviews and sends; **Astronomo never sends anything itself**. Every night gets a Markdown mission log, and an anomaly is flagged in it for a person to review. The concrete goal is on [the mission page](docs/mission.md#the-concrete-goal-what-astronomo-can-meaningfully-contribute).
+The modest aim for one telescope is narrower, and it is what is built today: **take part in the networks, not rediscover what is known.** A 50 mm telescope supplies what the networks are short of, so Astronomo takes targets from their own lists: the AAVSO Target Tool (variable-star magnitudes), [ExoClock](https://www.exoclock.space/) and [NASA Exoplanet Watch](https://exoplanets.nasa.gov/exoplanet-watch/) (transit times), the [Minor Planet Center](https://minorplanetcenter.net/)'s NEO Confirmation Page and public Rubin alerts. Only the variable-star and transit plugins are meant for use. The **default product is a database-ready upload file** (AAVSO or ADES) that a person reviews and sends; **Astronomo never sends anything itself**. Every night gets a findings summary and a Markdown mission log, and an anomaly is flagged in the log for a person to review. The concrete goal is on [the mission page](docs/mission.md#the-concrete-goal-what-astronomo-can-meaningfully-contribute).
 
 **Status in short.** The pipeline works end to end in simulation and is covered by tests. On a real Seestar S50 Pro it has finished two short supervised variable-star visits, and the magnitudes agree with Gaia within their quoted errors. It has not yet done a clean 40-frame night, run a whole mission over station mode, produced a live AAVSO file, or seen a transit. [Status](docs/status.md) says, stage by stage, what has and has not been seen on a real telescope, and [what is not real yet](docs/status.md#what-is-not-real-yet) is the honest list of gaps.
 
@@ -33,7 +33,7 @@ cd astronomo
 python3 install.py    # Python 3.10 or newer. Creates .venv, installs, writes .env, runs a fast simulation (the default plugin).
 ```
 
-`install.py` asks only for an upload identity (observer name, AAVSO code, MPC station code, site). Leave any answer blank. It does not ask for a key, and it leaves the telescope mock on. By hand: `python3 -m venv .venv`, `source .venv/bin/activate`, `pip install -r requirements.txt`, and optionally `cp .env.example .env`. Tested with Python 3.10, langgraph 1.2, photutils 2.0, astropy 6.1, fastapi 0.115.
+`install.py` asks only for an upload identity (observer name, AAVSO code, MPC station code, site). Leave any answer blank. It does not ask for a key, and it leaves the telescope mock on. By hand: `python3 -m venv .venv`, `source .venv/bin/activate`, `pip install -r requirements.txt`, and optionally `cp .env.example .env`. CI tests Python 3.10, 3.11, 3.12 and 3.13 every day (pull requests run 3.10), each with a clean install of the newest libraries `requirements.txt` allows: langgraph 1.2, fastapi 0.115, and on 3.11 to 3.13 astropy 8.0 and photutils 3.x (3.10 gets astropy 6.1 and photutils 2.0, the newest that support it).
 
 ### 2. Run a simulated variable-star visit
 
@@ -55,15 +55,16 @@ Mission m_20261120_222949_1537 finished: COMPLETE
    - V1234 Lac (sim): A minimum: depth 27.8 %, duration 0.88 h, mid-time 2026-11-20 23:55 UTC, 10 comparison stars.
        cross-ref: eclipse on time: 11.300 +/- 0.030 mag, minimum at 2026-11-20 23:55 UTC.
   upload files ({'simulated': 2, ...}); none are sent, a person reviews each:
-   - [simulated] AAVSO (WebObs) variable_star_photometry: .../submissions/SIMULATED_V1234Lacsim_2026-11-20_AAVSO_Extended.txt
-  mission log: .../log/mission_log_2026-11-20.md
+   - [simulated] AAVSO (WebObs) variable_star_photometry: .../results/SIMULATED_V1234Lacsim_2026-11-20_AAVSO_Extended.txt
+  findings: .../results/findings_2026-11-20.md
+  mission log: .../results/mission_log_2026-11-20.md
 ```
 
-Output lands in `data/` (override with `ASTRONOMO_DATA_DIR`): `astronomo.sqlite` (telemetry), `checkpoints.sqlite` (LangGraph state), and per mission `missions/<id>/` with `frames/` (the FITS frames), `submissions/` (the upload files and a `manifest.json`; nothing in it has been sent) and `log/` (the Markdown mission log, which flags any anomaly at or above `ASTRONOMO_ANOMALY_MIN_SIGMA` for a person to review).
+Output lands in `data/` (override with `ASTRONOMO_DATA_DIR`): `astronomo.sqlite` (telemetry), `checkpoints.sqlite` (LangGraph state), and per mission `missions/<id>/` with `frames/` (the FITS frames) and `results/`, the one folder to open: the upload files and a `manifest.json` (nothing in it has been sent), `findings_<night>.md` (what was measured, the quoted error, what the numbers mean and what to check before sending) and `mission_log_<night>.md` (which flags any anomaly at or above `ASTRONOMO_ANOMALY_MIN_SIGMA` for a person to review).
 
 ### 4. Watch it in the dashboard (optional)
 
-Astronomo does not need a browser; step 2 is a complete run. To watch and to plan, run `python -m dashboard.api` in a second terminal and open [http://localhost:8765](http://localhost:8765). It serves the HTTP API (`/api/v1`) and the bundled React UI (no Node needed unless you change the React source). The pages are in [the dashboard guide](docs/dashboard.md), and the API contract is [docs/api.md](docs/api.md).
+Astronomo does not need a browser; step 2 is a complete run. To watch and to plan, run `python -m dashboard.api` in a second terminal and open [http://localhost:8765](http://localhost:8765) (it opens for you, and prints the address if another program has that port and it has to use the next one). It serves the HTTP API (`/api/v1`) and the bundled React UI (no Node needed unless you change the React source). The pages are in [the dashboard guide](docs/dashboard.md), and the API contract is [docs/api.md](docs/api.md).
 
 ### 5. Before any real upload
 

@@ -195,8 +195,9 @@ def test_a_mission_produces_upload_files_and_a_markdown_log_and_no_paper(run_onc
     assert text.startswith("# ") and "## Summary" in text and "## Observing log" in text and "## Reproducibility" in text
     assert "asteroid_finder (DRAFT, not ready for use" in text  # a draft plugin says so in its own log
     assert len(arts["mission_log"]) == 1 and len(arts["submission"]) == len(final["submissions"]) == 3
-    folder = Path(final["submissions_dir"])
+    folder = Path(final["results_dir"])
     assert (folder / "manifest.json").is_file()
+    assert log.parent == folder and Path(final["findings"]["path"]).parent == folder  # one folder to open
     assert all(r["sent"] is False and r["status"] in (STATUS_SIMULATED, STATUS_HELD) for r in final["submissions"])
 
 

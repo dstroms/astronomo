@@ -604,6 +604,31 @@ class AsteroidFinderPlugin(BaseExperimentPlugin):
             return "", d
         return None
 
+    def result_notes(self, observation: dict) -> dict:
+        """Candidates found, how well the frame was calibrated, and what each was matched to."""
+        findings = observation.get("findings") or {}
+        xref = observation.get("crossref") or {}
+        calib = xref.get("calibration") or {}
+        if calib.get("rms_arcsec") is not None and calib.get("n_matches"):
+            error = (
+                f"The astrometric calibration rms is {float(calib['rms_arcsec']):.2f} arcsec over {calib['n_matches']} Gaia "
+                "stars. No magnitude is quoted: the photometry is instrumental."
+            )
+        else:
+            error = "No astrometric error is quoted: the frame was not calibrated against Gaia. No magnitude is quoted either."
+        return {"measured": findings.get("summary"), "error": error, "compared": xref.get("summary")}
+
+    def caveats(self) -> list[str]:
+        return [
+            "This plugin is a draft and has not run on a real telescope. Treat everything here as a rehearsal.",
+            "Positions are checked only against Gaia stars in the same frame. Photometry is instrumental, so no magnitude "
+            "is reported.",
+            "\"Unidentified\" means only \"not explained by the objects queried\". SkyBoT and the Minor Planet Center are "
+            "not consulted, so it never means new.",
+            "The MPC wants an observatory code and observations of faint objects. A 50 mm telescope may not meet its "
+            "rules, and the ADES file should be run through the MPC's validator before anything is sent.",
+        ]
+
     def build_submissions(self, mission: dict) -> list[SubmissionDraft]:
         """One MPC ADES file per observed field that has astrometry worth reporting.
 

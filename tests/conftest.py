@@ -165,7 +165,7 @@ def run_graph(settings, plugin_name, mid="m_out", **overrides):
         h.db.create_mission(mid, plugin_name, True, {"cloud_cover_threshold_pct": 30.0})
         final = run_mission(h.app, mid, initial_state(mid, plugin_name, True))
         seq = [e["node"] for e in h.db.list_logs(mid, limit=3000, kinds=["node_start"])]
-        arts = {k: h.db.list_artifacts(mid, k) for k in ("submission", "mission_log")}
+        arts = {k: h.db.list_artifacts(mid, k) for k in ("submission", "mission_log", "findings")}
         arts["observations"] = h.db.list_observations(mid)  # as stored for the dashboard
         return final, seq, arts, h
     finally:

@@ -115,8 +115,9 @@ class MissionState(TypedDict, total=False):
     anomalies: list[dict]  # reached anomaly_min_sigma (core/anomaly.py)
     below_threshold: list[dict]  # valid but too weak to count; shown in the log
     submissions: list[dict]  # one record per upload file or held-back item (core/submission.py)
-    submissions_dir: str
+    results_dir: str  # the one folder a person opens: upload files, findings summary and mission log
     mission_log: dict  # the LogResult of the automated mission log (writer/markdown_writer.py)
+    findings: dict  # the LogResult of the findings summary beside it (core/findings.py)
 
 
 def initial_state(

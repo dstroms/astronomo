@@ -56,7 +56,7 @@ Wording changes labels only. The underlying records are the same.
 | GET | `/api/v1/missions/{id}/first-frame` | Live first-frame PNG |
 | GET | `/api/v1/missions/{id}/live-frame` | Latest live PNG |
 | GET | `/api/v1/missions/{id}/frame-watch` | Frame-watch figure |
-| GET | `/api/v1/artifacts/{id}` | Download an upload file or mission log |
+| GET | `/api/v1/artifacts/{id}` | Download an upload file, the findings summary or the mission log. A mission's `artifacts` has `findings` (with the table, caveats and checks inline), `submissions` and `mission_logs` |
 | GET | `/api/v1/opportunities` | Reachable targets (`?refresh=true` refetches lists) |
 | POST | `/api/v1/opportunities/refresh` | Same as refresh=true |
 | GET | `/api/v1/opportunities/{plugin}/{id}/track` | Altitude samples for a window (`?window_index=`) |

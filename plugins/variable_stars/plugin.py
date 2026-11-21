@@ -596,6 +596,56 @@ class VariableStarsPlugin(BaseExperimentPlugin):
     # ------------------------------------------------------------------ #
     # 5. Upload file and anomalies
     # ------------------------------------------------------------------ #
+    def result_notes(self, observation: dict) -> dict:
+        """The night's magnitude, the error that was quoted for it and what that error includes."""
+        xref = observation.get("crossref") or {}
+        meas = xref.get("measurement") or {}
+        ident = xref.get("identity") or {}
+        who = ident.get("status") or "not run"
+        if ident.get("separation_arcsec") is not None:
+            who += f" ({float(ident['separation_arcsec']):.1f} arcsec from the catalogue position)"
+        if meas.get("mag") is None:
+            return {
+                "measured": f"No magnitude ({meas.get('reason') or 'no magnitude'}).",
+                "error": "None: nothing was measured.",
+                "compared": f"Star identity: {who}.",
+            }
+        measured = (
+            f"{meas['mag']:.3f} mag, camera green (TG) on the Gaia G scale, from {meas.get('n_frames', '?')} frames"
+        )
+        eclipse = meas.get("eclipse") or {}
+        if eclipse.get("t_min_iso"):
+            err = eclipse.get("t_min_err_min")
+            measured += f"; minimum at {eclipse['t_min_iso'][:16].replace('T', ' ')} UTC" + (
+                f" +/- {float(err):.2f} min" if err else ""
+            )
+        error = (
+            f"+/- {float(meas['mag_err']):.3f} mag. It includes a {meas.get('systematic_mag', photometry.SYSTEMATIC_MAG)} mag "
+            "systematic floor (no flat frames, and the magnitude is not transformed to Johnson V)"
+        )
+        if meas.get("zp_scatter") is not None and meas.get("zp_n"):
+            error += f" and the scatter of {meas['zp_n']} comparison stars ({float(meas['zp_scatter']):.3f} mag)"
+        error += "."
+        if meas.get("trend_note"):
+            error += " The magnitude drifted across the visit, so the true error is larger than quoted."
+        compared = (
+            f"{str(meas.get('classification') or 'unclassified').replace('_', ' ')}. Star identity: {who}. "
+            "No published value exists for this star on this night: the classification says whether it agrees with "
+            "the catalogued range or a predicted minimum."
+        )
+        return {"measured": measured, "error": error, "compared": compared}
+
+    def caveats(self) -> list[str]:
+        return [
+            "The magnitude is differential against Gaia G with a colour term. It is a camera green (TG) magnitude, "
+            "reported untransformed, not a Johnson V magnitude.",
+            f"The quoted error has a {photometry.SYSTEMATIC_MAG} mag floor because there are no flat frames. A steady drift "
+            "across the visit means the true error is larger than quoted.",
+            "A window from the AAVSO list is a usable night, not an eclipse. The time in the file is the middle of the "
+            "series, not the time of minimum.",
+            "A flagged outburst, timing offset or Mira offset is a lead for a person to check, not a discovery.",
+        ]
+
     def build_submissions(self, mission: dict) -> list[SubmissionDraft]:
         night = mission.get("night") or "unknown-night"
         return [self._aavso_draft(rec, night) for rec in mission.get("observations", [])]

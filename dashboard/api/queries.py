@@ -429,11 +429,16 @@ def artifacts_payload(db: Database, mission_id: str) -> dict[str, Any]:
             "downloadable": bool(path and Path(path).is_file()),
             "blockers": meta.get("blockers") or [],
             "notes": meta.get("notes") or [],
+            # a findings summary carries its own table, caveats and checks so the page can show it without opening the file
+            "rows": meta.get("rows") or [],
+            "caveats": meta.get("caveats") or [],
+            "checks": meta.get("checks") or [],
             "created_at": art.get("created_at"),
             "age": human_age(art.get("created_at")),
         })
 
     return jsonable({
+        "findings": [one(a) for a in db.list_artifacts(mission_id, "findings")],
         "submissions": [one(a) for a in db.list_artifacts(mission_id, "submission")],
         "mission_logs": [one(a) for a in db.list_artifacts(mission_id, "mission_log")],
         "notice": (

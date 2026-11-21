@@ -82,6 +82,32 @@ def test_a_built_frontend_is_optional_and_served_from_the_same_process(tmp_path)
     assert client.get("/api/v1/health").json()["status"] == "ok"
 
 
+def _listener():
+    """A wildcard listener like the one that hides localhost on a developer machine."""
+    import socket
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(("0.0.0.0", 0))
+    sock.listen(16)
+    return sock, sock.getsockname()[1]
+
+
+def test_a_taken_default_port_moves_up_and_a_taken_chosen_port_is_refused():
+    import pytest
+    from dashboard.api.app import choose_port, port_in_use
+
+    sock, port = _listener()
+    try:
+        assert port_in_use(port)
+        moved = choose_port(port, explicit=False)
+        assert moved != port and not port_in_use(moved)
+        with pytest.raises(SystemExit, match="already in use"):
+            choose_port(port, explicit=True)
+    finally:
+        sock.close()
+    assert choose_port(port, explicit=True) == port
+
+
 def test_the_ui_url_is_localhost_for_a_loopback_bind():
     assert ui_url("127.0.0.1", 8765) == "http://localhost:8765"
     assert ui_url("0.0.0.0", 9000) == "http://localhost:9000"

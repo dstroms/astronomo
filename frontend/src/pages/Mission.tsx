@@ -136,6 +136,41 @@ export default function Mission() {
       {tab === "Documents" && (
         <div className="stack">
           <p className="muted small">{arts.notice}</p>
+          {(arts.findings || []).map((a: any) => (
+            <div key={a.id} className="card stack">
+              <div className="row">
+                <div className="grow">
+                  <div className="eyebrow">Findings summary</div>
+                  <b>{a.title}</b>
+                </div>
+                {a.downloadable && <a className="btn primary" href={`/api/v1/artifacts/${a.id}`}>Download {a.filename}</a>}
+              </div>
+              {(a.rows || []).length > 0 && (
+                <div className="tablewrap">
+                  <table>
+                    <thead><tr><th>Target</th><th>Measured</th><th>Quoted error</th><th>Compared with</th></tr></thead>
+                    <tbody>
+                      {a.rows.map((r: any, i: number) => (
+                        <tr key={i}><td>{r.target}</td><td>{r.measured}</td><td>{r.error}</td><td>{r.compared}</td></tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              {(a.caveats || []).length > 0 && (
+                <div>
+                  <div className="eyebrow">What the numbers mean</div>
+                  <ul className="small">{a.caveats.map((c: string, i: number) => <li key={i}>{c}</li>)}</ul>
+                </div>
+              )}
+              {(a.checks || []).length > 0 && (
+                <div>
+                  <div className="eyebrow">Check before sending</div>
+                  <ul className="small">{a.checks.map((c: string, i: number) => <li key={i}>{c}</li>)}</ul>
+                </div>
+              )}
+            </div>
+          ))}
           {["submissions", "mission_logs"].map((k) => (
             (arts[k] || []).map((a: any) => (
               <div key={a.id} className="card">
@@ -259,6 +294,7 @@ function Lead({ data }: { data: any }) {
   const row = data.row || {};
   const summary = data.summary || {};
   const arts = (data.artifacts?.submissions || [])[0];
+  const findings = (data.artifacts?.findings || [])[0];
   const slot = summary.verdict === "good" ? "green" : summary.verdict === "attention" ? "orange" : "blue";
   if (row.state === "ORPHANED" || row.state === "PAUSED") {
     return (
@@ -299,6 +335,9 @@ function Lead({ data }: { data: any }) {
             {arts.downloadable ? <div style={{ margin: "10px 0 8px" }}><a className="btn primary" href={`/api/v1/artifacts/${arts.id}`}>Download {arts.filename}</a></div> : null}
           </>
         ) : <div className="muted small" style={{ marginTop: 8 }}>None yet.</div>}
+        {findings?.downloadable ? (
+          <div className="small" style={{ margin: "0 0 8px" }}>Read the <a href={`/api/v1/artifacts/${findings.id}`}>findings summary</a> before you send anything.</div>
+        ) : null}
         <div className="small muted">Nothing is sent anywhere: you review each file and upload it yourself.</div>
       </div>
     </div>

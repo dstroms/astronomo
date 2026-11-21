@@ -154,7 +154,7 @@ class Artifact(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     mission_id: Mapped[str] = mapped_column(ForeignKey("missions.id"), index=True)
-    kind: Mapped[str] = mapped_column(String(32), index=True)  # "submission" | "mission_log"
+    kind: Mapped[str] = mapped_column(String(32), index=True)  # "submission" | "mission_log" | "findings"
     title: Mapped[str] = mapped_column(String(512))
     path: Mapped[str | None] = mapped_column(Text, nullable=True)  # None for a held-back submission
     status: Mapped[str | None] = mapped_column(String(32), nullable=True)
