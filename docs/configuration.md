@@ -29,8 +29,8 @@ These are identities the AAVSO and the MPC assign to you. Astronomo writes them 
 |---|---|---|
 | `ASTRONOMO_OBSERVER_NAME` | empty | Submitter in the MPC ADES file (`asteroid_finder`), which is a `DRAFT_` until it is set. The AAVSO files do not use it |
 | `ASTRONOMO_OBSERVER_INSTITUTION` | empty | Read into the settings but **not written into any upload file yet** |
-| `ASTRONOMO_AAVSO_OBS_CODE` | empty | 1–5 letters or digits ([how to get one](first-light/01-aavso-observer-code.md)). The `#OBSCODE=` line of the AAVSO files from `transit_finder`, `rubin_followup`, and `variable_stars` |
-| `ASTRONOMO_MPC_STATION_CODE` | empty | Three letters or digits ([read this first](first-light/04-mpc-observatory-code.md): a 50 mm telescope may not qualify). The station in the MPC ADES file from `asteroid_finder` |
+| `ASTRONOMO_AAVSO_OBS_CODE` | empty | 1–5 letters or digits ([how to get one](runbooks/aavso-observer-code.md)). The `#OBSCODE=` line of the AAVSO files from `transit_finder`, `rubin_followup`, and `variable_stars` |
+| `ASTRONOMO_MPC_STATION_CODE` | empty | Three letters or digits ([read this first](notes/mpc-observatory-code.md): a 50 mm telescope may not qualify). The station in the MPC ADES file from `asteroid_finder` |
 | `ASTRONOMO_SITE_LAT` / `_SITE_LON` / `_SITE_ELEV_M` / `_SITE_NAME` | unset | The observing site ([below](#the-observing-site)). When set, they win over a saved site. A real-telescope run refuses the Denver placeholder |
 
 `SIMULATED_` and `REPLAY_` files stay blocked whatever you set. Setting a code removes only its own "missing" blocker. What each code is written into is also in the [README](../README.md#quick-start).
@@ -61,7 +61,7 @@ Self-start stays off. Nothing in the repository sets `ASTRONOMO_UNATTENDED_CONFI
 | Variable | Default | Meaning |
 |---|---|---|
 | `ASTRONOMO_CLOUD_THRESHOLD` | `30` | Cloud-cover % above which the mission sleeps |
-| `ASTRONOMO_ASSUME_CLEAR` | `false` | When the forecast cannot be fetched, treat the sky as clear because the operator said so. A forecast that was actually read, including one saved by `--fetch-forecast`, is still enforced, and the Sun interlock still applies. Leave this off. On a home network in station mode the live forecast is reachable; if you use the telescope's own Wi-Fi, save the forecast before joining it |
+| `ASTRONOMO_ASSUME_CLEAR` | `false` | When the forecast cannot be fetched, treat the sky as clear because the operator said so. A forecast that was actually read, including one saved by `--fetch-forecast`, is still enforced, and the Sun interlock still applies. Leave this off. Save the forecast before joining the telescope's own Wi-Fi ([real hardware](real-hardware.md)) |
 | `ASTRONOMO_FORECAST_MAX_AGE_H` | `12` | How old a saved forecast may be and still stand in for a live reading. Older than this, a failed fetch is "not safe to observe" |
 | `ASTRONOMO_MAX_WIND_KMH` | `40` | Wind limit |
 | `ASTRONOMO_DEW_MARGIN_C` | `2` | Temperature minus dew point, from the forecast. Below this the mission waits. There is no dew sensor |
@@ -84,8 +84,8 @@ Self-start stays off. Nothing in the repository sets `ASTRONOMO_UNATTENDED_CONFI
 | Variable | Default | Meaning |
 |---|---|---|
 | `ASTRONOMO_MOCK_MODE` | `true` | Telescope mock. `false` = **real hardware** |
-| `ASTRONOMO_SEESTAR_HOST` / `_PORT` | `seestar.local` / `4700` | The telescope's host, used by both transports; the port is the JSON-RPC control socket only (Alpaca has `_ALPACA_PORT` below). In station mode on a home network, the default `seestar.local` worked on a home network (2026-11-20), or set the host to the telescope's IP address (for example `192.168.1.200`), ideally reserved in your router. The address is the fallback for a network that drops name lookups, and it can change if it is not reserved. On the telescope's own Wi-Fi it is `10.0.0.1` or `seestar.local` |
-| `ASTRONOMO_SEESTAR_TRANSPORT` | `jsonrpc` | `jsonrpc` \| `alpaca`. Firmware 7.18 and newer needs `alpaca` (ASCOM Alpaca, no key). On a Seestar S50 Pro this worked on firmware 9.75 after the firmware was updated in the app, Alpaca was switched on there, and the computer joined the telescope Wi-Fi (2026-11-13). It also answered over a home network in station mode (2026-11-20, hardware check only; see [Connect a real Seestar](../README.md#connect-a-real-seestar), which warns about routers on `10.0.0.x`). See [firmware and authentication](first-light/03-firmware-and-authentication.md) |
+| `ASTRONOMO_SEESTAR_HOST` / `_PORT` | `seestar.local` / `4700` | The telescope's host, used by both transports, as a name or an IP address. The port is the JSON-RPC control socket only (Alpaca has `_ALPACA_PORT` below). How to find the address, whether to reserve it in the router, and the `10.0.0.x` trap are in [Connect a real Seestar](connect-a-seestar.md) |
+| `ASTRONOMO_SEESTAR_TRANSPORT` | `jsonrpc` | `jsonrpc` \| `alpaca`. Firmware 7.18 and newer needs `alpaca` (ASCOM Alpaca, no key); why is in [the firmware note](notes/firmware-and-authentication.md), and how to connect is in [Connect a real Seestar](connect-a-seestar.md) |
 | `ASTRONOMO_SEESTAR_ALPACA_PORT` | `32323` | The Alpaca server's port (used only when the transport is `alpaca`) |
 | `ASTRONOMO_SEESTAR_SHARE_PATH` | unset | Local mount of the Seestar image share (required for real capture on the JSON-RPC transport; not used over Alpaca) |
 | `ASTRONOMO_SEESTAR_SET_SITE` | `true` | On connect, tell the Seestar the site and the time (from your site profile; a placeholder site is never sent) |

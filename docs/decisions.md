@@ -2,7 +2,7 @@
 
 Why Astronomo is built the way it is, and where its gaps are. The plan is in the [roadmap](../ROADMAP.md); this page is the reasoning behind it.
 
-Moved out of the roadmap on 2026-11-20 with the text unchanged. **The phase numbers and phase names inside this page are the old ones** (Phases 1 to 6 before the reorganization). In the current roadmap: old Phases 3, 4 and 5 (bounded LLM decisions, close the loop, measure the models) are now [Phase 6](../ROADMAP.md#phase-6-autonomy); old Phase 2 (unattended and trustworthy) is now [Phase 3](../ROADMAP.md#phase-3-first-accepted-file) and [Phase 4](../ROADMAP.md#phase-4-steady-and-unattended); old Phase 1 (first light) is now [Phases 1 and 2](../ROADMAP.md#phase-1-public-release); old Phase 6 (reach) is now [Phase 7](../ROADMAP.md#phase-7-reach).
+Moved out of the roadmap on 2026-11-20 with the text unchanged. **The phase numbers and phase names inside this page are the old ones** (Phases 1 to 6 before the reorganization). In the current roadmap: old Phases 3, 4 and 5 (bounded LLM decisions, close the loop, measure the models) are now [Phase 7](../ROADMAP.md#phase-7-autonomy); old Phase 2 (unattended and trustworthy) is now [Phase 3](../ROADMAP.md#phase-3-first-accepted-file), [Phase 4](../ROADMAP.md#phase-4-claims-you-can-defend) and [Phase 5](../ROADMAP.md#phase-5-unattended-and-automatic); old Phase 1 (first light) is now [Phases 1 and 2](../ROADMAP.md#phase-1-public-release); old Phase 6 (reach) is now [Phase 8](../ROADMAP.md#phase-8-reach).
 
 ## Decisions
 
@@ -64,6 +64,6 @@ Evaluated from `astronomo/core/graph.py`, the README and the config. Short versi
 5. **Retries exist and are unproven on a real fault.** A transient network or link error is retried (`ASTRONOMO_NODE_RETRIES`). A device error is not. The policy has met simulated faults only. [Phase 1]
 6. **Thin LLM surface for benchmarking.** Two prose tasks of up to 160 and 300 output tokens do not discriminate much between models, and quality is judged only by a number-grounding check. [Phases 3 and 5]
 7. **Single provider config.** One global `LLM_`* setting means every node uses the same model, so cross-task comparison is not expressible yet. [Phase 3]
-8. **Mixed responsibilities in `generate_hypothesis`.** It validates and persists targets and also calls the LLM. Splitting the LLM part into its own node would make it replaceable, skippable and benchmarkable on its own. [Phase 3]
+8. **Mixed responsibilities in `generate_hypothesis`.** It validates and persists targets and also calls the LLM. Splitting the LLM part into its own node would make it replaceable, skippable and benchmarkable on its own. [Phase 7.1](../ROADMAP.md#phase-7-autonomy)
 9. **Mission state grows with the mission.** `observations` accumulates inside the checkpointed state. That is fine for a few targets but worth watching for long multi-day surveys. [Phase 2]
 

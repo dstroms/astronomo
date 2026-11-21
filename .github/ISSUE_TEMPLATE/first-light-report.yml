@@ -39,7 +39,7 @@ body:
     attributes:
       label: The "unconfirmed" table
       description: >
-        The Alpaca table in docs/first-light/05-first-light-checklist.md. Fill in whatever you saw for each blank
+        The Alpaca table in docs/hardware-questions.md. Fill in whatever you saw for each blank
         row (focus and pointing, field rotation, frame statistics, magnitude reached, timing error, the interlocks,
         Bayer pattern, lastexposurestarttime, and the open parts of rows 18 and 21). "Did not get that far" is a
         useful answer.

@@ -1,7 +1,7 @@
 # The asteroid plugin
 
 > **Draft: not ready for use.** This plugin has never run on a real telescope, and its MPC upload needs an observatory code
-> that is not being pursued ([why](../first-light/04-mpc-observatory-code.md)). It is kept and tested: it runs in simulation and
+> that is not being pursued ([why](../notes/mpc-observatory-code.md)). It is kept and tested: it runs in simulation and
 > on the ZTF replay, and it proves the core is not tied to one science case. It refuses to command a real telescope unless
 > `ASTRONOMO_ALLOW_DRAFT_PLUGINS=1` is set. Its mission logs say "DRAFT".
 

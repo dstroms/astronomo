@@ -1,4 +1,4 @@
-# 1. AAVSO observer code, site and equipment
+# AAVSO observer code, site and equipment
 
 **Why:** every AAVSO Exoplanet Report carries your observer code, and NASA's Exoplanet Watch ingests transit
 light curves from the AAVSO Exoplanet Database. Until `ASTRONOMO_AAVSO_OBS_CODE` is set, every Astronomo upload file is

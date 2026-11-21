@@ -6,7 +6,7 @@ the answer and a validator; the plugin that understands the data builds it
 (:meth:`core.base_plugin.BaseExperimentPlugin.opportunities`).
 
 Nothing here starts a mission, talks to hardware or sends anything.  An opportunity is a suggestion
-a person can turn into a *planned* record (``Database.plan_observation``); a scheduler (roadmap Phase 4)
+a person can turn into a *planned* record (``Database.plan_observation``); a scheduler (roadmap Phase 5)
 will be what picks those up.
 
 Report (``opportunities()`` -> ``dict``)::

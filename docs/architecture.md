@@ -1,7 +1,100 @@
 # Architecture and layout
 
-How the code is organised, what a mission produces (upload files and a mission log) and what is stored. The diagrams are in the README: the overall shape in
-[Architecture](../README.md#architecture) and the mission flow in [How a mission runs](../README.md#how-a-mission-runs).
+How the code is organised, how a mission runs, what a mission produces (upload files and a mission log) and what is stored. The README has a smaller diagram of the overall shape ([How it fits together](../README.md#how-it-fits-together)).
+
+## The overall shape
+
+```mermaid
+flowchart LR
+    person(["Operator"])
+
+    subgraph ui["Interfaces"]
+        cli["main.py<br/>run, resume, schedule"]
+        api["Dashboard API and React UI<br/>reads the database, never talks to the telescope"]
+    end
+
+    subgraph core["core/ : knows no science case"]
+        run["LangGraph mission graph<br/>checkpointed, resumes after a crash"]
+        rules["Rules kept in code<br/>weather and site interlocks, anomaly threshold, upload-file statuses"]
+        firewall["digest.py, the data firewall<br/>a model may see only a short digest"]
+    end
+
+    subgraph plugin["Plugin boundary: BaseExperimentPlugin"]
+        hooks["variable_stars, transit_finder, asteroid_finder, rubin_followup, yours<br/>targets, exposure plan, reduction, cross-reference, anomalies, upload files"]
+    end
+
+    subgraph tools["tools/"]
+        scope["Seestar controller<br/>real (Alpaca or JSON-RPC) or mock"]
+        wx["Open-Meteo weather"]
+        cat["Catalogues: Gaia, Horizons"]
+    end
+
+    llm["Optional language model<br/>off by default"]
+    db[("SQLite<br/>telemetry and checkpoints")]
+    out["Upload files and a Markdown mission log"]
+
+    person --> cli
+    person --> api
+    api -. "a confirmed start runs main.py --from-plan" .-> cli
+    cli --> run
+    api --> db
+    run --- rules
+    run <--> hooks
+    run --> scope
+    run --> wx
+    run --> cat
+    run --> db
+    run --> out
+    out -- "a person reviews and sends" --> person
+    run -- "short digest" --> firewall
+    firewall --> llm
+    llm -- "observing rationale only" --> run
+```
+
+- **The plugin boundary.** `core/` and `tools/` know no science case. A plugin supplies targets, an exposure plan, the reduction, the cross-check, the anomaly proposals and the upload files; core runs the mission and decides the statuses. Adding a science case does not touch core ([Writing a plugin](writing-a-plugin.md)).
+- **Rules stay in code.** Weather gating, site interlocks, parking, the anomaly threshold and which upload files can be marked ready are plain Python. A plugin or a model cannot lower them.
+- **The data firewall.** A model never receives raw data, FITS paths, tables or findings. It sees a short digest of scalar fields, and `core/digest.py` rejects anything larger or array-like before it is sent.
+- **The model's role.** Optional and advisory. Today it writes one thing, the observing rationale shown on the dashboard. Nothing it writes gates weather, hardware, detections or the files ([Language models](models.md#language-models-optional)).
+- **Nothing is sent.** Astronomo writes files; a person reads each one and submits it from their own account.
+
+## How a mission runs
+
+```mermaid
+flowchart TD
+    start(["START"]) --> hyp["generate_hypothesis"]
+    hyp -- "target has a start time" --> wait["wait_for_visit"]
+    hyp --> wx{"check_weather"}
+    wait --> wx
+    wx -- "clear" --> obs["execute_observation"]
+    wx -- "cloudy or unsafe" --> sl["sleep"]
+    sl -- "re-check" --> wx
+    sl -- "never clears" --> rel["release"]
+    rel -. "resumes at the wake time" .-> wx
+    obs --> red["reduce_data"] --> xr["cross_reference"]
+    xr -- "more targets" --> wx
+    xr -- "none left" --> scr["screen_anomalies"] --> pkg["package_submission"] --> log["write_log"] --> done(["END"])
+```
+
+| Node                  | What it does                                                                                                                                                                     |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `generate_hypothesis` | `plugin.generate_targets()` → validate, rank by priority, cap at `MAX_TARGETS`. Each target says which network chose it and why (`network.sources`, `task`, `reason`, `score`).  |
+| `wait_for_visit`      | Only for a target that has a start time (a scheduled visit, or a survey replay): blocks on the mission clock until it is due (status `WAITING`). |
+| `check_weather`       | Open-Meteo. **Cloud cover > 30 %** (or wind, precipitation, missing data, or — on real hardware — Sun above −12°) → status `SLEEP`.                                              |
+| `sleep`               | Wait, re-check; after `MAX_SLEEP_CYCLES` the mission is `ABORTED` (and still screens, packages and logs whatever it already has).                                                |
+| `release`             | If the weather never clears, the mission keeps a wake time and hands the process back instead of aborting; the scheduler resumes it. |
+| `execute_observation` | `plugin.get_exposure_plan()` + `SeestarController.capture_sequence()` → FITS files.                                                                                              |
+| `reduce_data`         | `plugin.analyze_frames(fits_paths)` → structured findings.                                                                                                                       |
+| `cross_reference`     | `plugin.cross_reference(findings, catalogs, target)`; catalog outages are recorded, not fatal.                                                                                   |
+| `screen_anomalies`    | `plugin.detect_anomalies()` proposes leads with a significance in sigma; **core** keeps only those at or above `ANOMALY_MIN_SIGMA`, so a plugin cannot talk itself into raising an alarm. |
+| `package_submission`  | `plugin.build_submissions()` → upload files + `manifest.json` in `submissions/`. A draft with missing information is held back or marked `DRAFT_`; nothing is sent.              |
+| `write_log`           | Writes the **mission log** as Markdown (no model-written text), including any anomaly flagged for a person to review.                                                            |
+
+Archive missions skip `check_weather` (a survey's conditions are part of its data) and wait on the replay clock instead. See
+[Real data and long cadences](real-data.md).
+
+**Failure policy:** an exception in any node marks the mission `FAILED` (message stored, mission stops), except a
+transient network or link error, which is retried a few times with backoff first (`ASTRONOMO_NODE_RETRIES`). A device
+error is never retried. Telescope errors park the mount. Weather outages fail *safe* (sleep).
 
 ## Layout
 

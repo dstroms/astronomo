@@ -6,17 +6,17 @@ The plan: what each phase delivers, how it is built, and when it is done. **A ph
 
 ## Now
 
-*Last updated 2026-11-20. This block is the starting point when you come back. Update it first, and keep the detail in the phases below and in the journal.*
+*Last updated 2026-11-21. This block is the starting point when you come back. Update it first, and keep the detail in the phases below and in the journal.*
 
 **Where we are.** Two short (12-frame) variable-star visits finished on a real Seestar S50 Pro on 2026-11-18 (Hat-P-23). The reanalysed magnitudes, 12.145 ± 0.057 and 12.139 ± 0.042, are inside the quoted error of Gaia G 12.162. Pointing correction, autofocus and a local plate solve have worked on the sky. On 2026-11-20 the telescope joined the home network in station mode, after the router was moved off `10.0.0.x`, and one computer reached the telescope, Open-Meteo and the Harvard VizieR mirror together. The hardware check passed. Not yet seen: a whole mission over station mode, a live AAVSO file, a transit that covers a mid-time.
 
 **Next, in this order.**
 
-1. [Phase 1, public release](#phase-1-public-release): a README screenshot, the architecture diagram, the Python version matrix, the documentation consolidation, and a findings package for each mission (1.6). None of it needs the telescope, and it can run alongside Phase 2.
-2. [Phase 2, first clean night](#phase-2-first-clean-night): keep the telescope awake while connected (2.1), build the recipe for repeating a night (2.2), then a 40-frame variable-star visit on the home network with nothing assumed (2.3). This closes [issue 7](https://github.com/dstroms/astronomo/issues/7).
+1. [Phase 1, public release](#phase-1-public-release): the Python version matrix (1.3), the documentation consolidation (1.5), a findings package for each mission (1.6), and then going public (1.7). The README screenshot, the architecture diagram and the README audit are done (1.2). None of it needs the telescope, and it can run alongside Phase 2.
+2. [Phase 2, first clean night](#phase-2-first-clean-night): keep the telescope awake while connected (2.1), build the recipe for repeating a night (2.2), then a 40-frame variable-star visit on the home network with nothing assumed (2.3).
 3. [Phase 3, first accepted file](#phase-3-first-accepted-file): retry buttons (3.1), then a real file through the AAVSO's own checks (3.2).
 
-Transits are [Phase 5](#phase-5-transits). Nothing before it needs one.
+Transits are [Phase 6](#phase-6-transits). Nothing before it needs one.
 
 ## Mission
 
@@ -24,7 +24,18 @@ Transits are [Phase 5](#phase-5-transits). Nothing before it needs one.
 
 ## Phases
 
-Seven phases. The order is the path: **a public repository, then a clean night, then a file a network accepts, then unattended running, and only then transits.** Phase 1 does not need the telescope, so it runs alongside Phase 2. Phases 2 and 3 are in sequence. Phases 6 and 7 are later and not yet scheduled.
+Eight phases. The order is the path: **a public repository, then a clean night, then a file a network accepts, then claims you can defend, then unattended and automatic running, and only then transits.** Phase 1 does not need the telescope, so it runs alongside Phase 2. Phases 2 and 3 are in sequence. Phases 7 and 8 are later and not yet scheduled.
+
+**How the phases cover the goal's loop** (propose, observe, analyze, test, then submit or rework; the [mission](docs/mission.md) page and the README start from it):
+
+| Step | Delivered by |
+| --- | --- |
+| Propose what to observe | [5.4](#phase-54-plan-the-night-without-a-person) rules in code that a person approves, then [7.1](#phase-7-autonomy) a model proposing within bounds |
+| Observe | [Phase 2](#phase-2-first-clean-night) a clean night, [Phase 5](#phase-5-unattended-and-automatic) unattended and over many nights |
+| Analyze | [4.1](#phase-4-claims-you-can-defend) honest errors, then [7.1](#phase-7-autonomy) a model accepting or re-observing |
+| Test the finding | [4.2](#phase-4-claims-you-can-defend) claim levels, then [7.2](#phase-7-autonomy) confirmation observations |
+| Submit | [Phase 3](#phase-3-first-accepted-file) a file the AAVSO accepts, then [8.2](#phase-8-reach) sending after a recorded sign-off |
+| Rework | [7.2](#phase-7-autonomy) follow up, redesign or drop, within hard limits |
 
 **How to read a phase.** A top-level phase (Phase 3) has a goal, what is already done, its sub-phases (Phase 3.1, 3.2 and so on) and **exit criteria**: the phase is finished when all of its exit criteria are true, and not before. A sub-phase is one piece of work: a checklist of tasks and a *done when*. Tick a task when it is done, and a phase when its exit criteria are. Where a task from the old phase lists went is in the [field journal](docs/journal.md#the-old-phase-lists-phases-1-to-6-as-of-2026-11-20).
 
@@ -32,7 +43,7 @@ Seven phases. The order is the path: **a public repository, then a clean night, 
 
 **Goal:** the repository can be made public without surprises. A stranger can install it, read an honest README, and know what is unproven. This phase does not wait for a clean night: the README says what has and has not been seen.
 
-**Done:** Apache-2.0 `LICENSE` and `NOTICE`; the hardware use-at-your-own-risk disclaimer; the not-affiliated statement; `CONTRIBUTING.md`, `SECURITY.md` and the issue forms; private vulnerability reporting (2026-11-14); the `.agents/` decision (ignored); this roadmap inside the repository; `pyproject.toml` with an `astronomo` command and `install.py`; settings validated at startup; CI ([first green run](https://github.com/dstroms/astronomo/actions/runs/43617713466), 2026-11-14): pushes run the short suite, and the full suite runs when Python, the requirements, the test config or the workflow changes, and daily at 06:00 Mountain Standard Time.
+**Done:** Apache-2.0 `LICENSE` and `NOTICE`; the hardware use-at-your-own-risk disclaimer; the not-affiliated statement; `CONTRIBUTING.md`, `SECURITY.md` and the issue forms; the `.agents/` decision (ignored); this roadmap inside the repository; `pyproject.toml` with an `astronomo` command and `install.py`; settings validated at startup; CI (first green run 2026-11-14, in the repository this one was recreated from): pushes run the short suite, and the full suite runs when Python, the requirements, the test config or the workflow changes, and daily at 06:00 Mountain Standard Time.
 
 #### Phase 1.1: Settle the third-party data question
 
@@ -42,38 +53,42 @@ Seven phases. The order is the path: **a public repository, then a clean night, 
 
 #### Phase 1.2: Show what it does
 
-- [ ] **Dashboard screenshot** in the README, so a visitor sees what it does without installing anything.
-- [x] **Architecture diagram:** the mission graph, the plugin boundary, the data firewall and the model's role, as two Mermaid diagrams in the README ([Architecture](README.md#architecture) and [How a mission runs](README.md#how-a-mission-runs)). Done 2026-11-20. GitHub draws them; the text carries the same facts for anywhere that does not.
-- [ ] **Keep the README honest.** Its status block and limitations say what has been seen on a real telescope and what has not (no live AAVSO file yet, no transit, station mode not yet used on the sky). Keep its phase list in step with this one. It has no checkboxes or dates on purpose, so it should rarely change.
+- [x] **Architecture diagram:** the mission graph, the plugin boundary, the data firewall and the model's role, as Mermaid diagrams. Done 2026-11-20, and moved on 2026-11-21 when the README was cut: a small diagram stays in the README ([How it fits together](README.md#how-it-fits-together)), and the full diagram and the mission flow are in [Architecture](docs/architecture.md#the-overall-shape). GitHub draws them; the text carries the same facts for anywhere that does not.
+- [x] **A README screenshot:** the dashboard's page for a finished simulated mission (result, what it means, the file to review, the light curve), at `docs/images/dashboard-mission.png`, captioned as practice data. Done 2026-11-21. It was taken from a mission run into a throwaway data folder, so it shows no real site or night.
+- [x] **Audit the README against what has been seen.** Done 2026-11-21: the phase list matches the phases here; the intro says the asteroid and Rubin plugins are drafts; `transit_finder` reads "ready (simulation only)"; "Not yet seen" includes a whole mission over station mode; station mode is called bench-tested only; stale test timings, a broken link and a stray markup glitch were fixed.
 
-*Done when:* the screenshot and the diagram are in the README and a reader of the README alone would not think more is proven than is.
+*Standing rule, not a task:* the README's status block and limitations say what has been seen on a real telescope and what has not. Keep its phase list in step with this file. It has no checkboxes or dates on purpose, so it should rarely change. Re-read it against this file whenever a phase closes.
+
+*Done when:* the screenshot and the diagram are in the README and a reader of the README alone would not think more is proven than is. Done 2026-11-21.
 
 #### Phase 1.3: Say which Python versions work
 
-- [ ] Tested on 3.10 only. Test 3.11 and 3.12 in CI and state what is supported.
+- [x] **A real bug found and fixed (2026-11-21).** A fresh install on Python 3.12 and 3.13 failed 20 tests: NumPy 2.5 no longer turns a one-element array into a float, in the pointing check that runs before a real capture (`core/setup_checks.py`, two lines). It was not a Python problem. NumPy 2.3 and later will not install on 3.10, so the 3.10 runs never saw it, and `requirements.txt` lists minimums only, so a new user gets the newest libraries their Python allows (astropy 8, photutils 3, NumPy 2.5 on 3.12) rather than the ones the README names.
+- [x] **CI runs a matrix** of Python 3.10, 3.11, 3.12 and 3.13, each with a clean install, and one version failing does not hide the others (`.github/workflows/tests.yml`). 3.12 and 3.13 were also run locally after the fix.
+- [ ] **Confirm the matrix is green on GitHub** (3.11 has not been run anywhere yet), then name the versions that pass and the library versions they got in the README and in CONTRIBUTING, replacing "Tested with Python 3.10 …". Not done on purpose until the matrix has run.
 
 *Done when:* CI runs the matrix, and the README names the versions that pass.
 
 #### Phase 1.4: Restructure the documentation
 
-- [x] Slim this roadmap, the first-mission note and the README, and move the history out of them. Reviewed and committed (2026-11-20); `tests/test_docs_linked.py` passes.
+- [x] Slim this roadmap, the first-clean-night runbook and the README, and move the history out of them. Reviewed and committed (2026-11-20); `tests/test_docs_linked.py` passes.
 
 *Done when:* the changes are reviewed and committed, and `tests/test_docs_linked.py` passes.
 
 #### Phase 1.5: Consolidate the documentation
 
-The repository has about 35 Markdown files. Phase 1.4 moved history out of the roadmap, the first-mission note and the README. This phase makes the whole tree easy to find your way around before strangers see it.
+The repository has about 35 Markdown files. Phase 1.4 moved history out of the roadmap, the first-clean-night runbook and the README. This phase makes the whole tree easy to find your way around before strangers see it.
 
 - [x] **Replace the dashboard design package** (seven files and five Streamlit screenshots, about 1,700 lines and 3.4 MB, all describing the Streamlit app that no longer exists) with the short [dashboard guide](docs/dashboard.md), checked against `frontend/src`. Done 2026-11-20. Two things it found that are still open: the IBM Plex fonts load from Google Fonts, so they fall back with no internet at the telescope, and `dashboard/vocab.py` still holds hex colours for mission states.
 - [x] **Move the mission out of the roadmap** into [mission](docs/mission.md). Done 2026-11-20.
-- [ ] **One home per topic.** `configuration.md`, `real-hardware.md`, `real-data.md` and `architecture.md` each explain setup and settings from a different angle. Decide where each setting and each setup step lives, and link to it from the others.
-- [ ] **Sort `docs/first-light/` into runbooks and notes.** The numbered notes mix how-tos (06, 08), open questions (05) and one-off notes (01 to 04, 07). Name and group them by what they are, not by when they were written.
-- [ ] **README to about 150 lines.** Move the long Known limitations section to [status](docs/status.md), and the connection steps to one page.
+- [x] **One home per topic.** Done 2026-11-21. Connecting to a telescope (station mode, the router trap, the host and the smoke test) lives in [Connect a real Seestar](docs/connect-a-seestar.md). Every setting lives in [configuration](docs/configuration.md), and its rows for the host, the transport and `ASTRONOMO_ASSUME_CLEAR` now link to those pages instead of retelling them. [Real hardware](docs/real-hardware.md) keeps only what is specific to a real scope (what is untested, the interlocks, the forecast before the telescope's Wi-Fi, retries) and links out for the rest (110 to 80 lines). The mission flow and the full diagram live in [architecture](docs/architecture.md), not in the README. `real-data.md` was read and overlaps with none of them.
+- [x] **Sort `docs/first-light/` into runbooks and notes.** Done 2026-11-21. `docs/runbooks/` holds what a person does ([first clean night](docs/runbooks/first-clean-night.md), [first transit](docs/runbooks/first-transit.md), [getting an AAVSO observer code](docs/runbooks/aavso-observer-code.md)). `docs/notes/` holds why and what was found ([firmware and authentication](docs/notes/firmware-and-authentication.md), [MPC observatory code](docs/notes/mpc-observatory-code.md), [science options](docs/notes/science-options.md)). The one living checklist is [open hardware questions](docs/hardware-questions.md). The numbers are gone from the names, `docs/first-light/` no longer exists, and every link, code comment and error message that named it was updated.
+- [x] **README to about 150 lines.** Done 2026-11-21, 341 to 144 lines. The connection steps, the Known limitations list, the architecture and mission-flow diagrams with the node table, the command list, the documentation table and the codes table moved to the pages that own them; the README keeps a short summary of each, a smaller diagram and a four-row plugin table.
 - [x] **Quick start uses a variable-star visit,** the case that works on this telescope, instead of Rubin and asteroid examples: the sample run is `--plugin variable_stars --simulate --fast`, the steps are numbered 1 to 6, and `variable_stars` leads the plugin table. Done 2026-11-20.
-- [x] **Mark the plugins that are not ready as drafts** (`asteroid_finder`, `rubin_followup`) instead of deleting them: a `status = "draft"` attribute on the plugin class, a status column in the README table, a banner on each plugin page, `--list-plugins` and the mission header and log saying "DRAFT", and a refusal to command a real telescope unless `ASTRONOMO_ALLOW_DRAFT_PLUGINS=1`. The default plugin is now `variable_stars`. Done 2026-11-20. Revisit deleting them if keeping four plugins green slows Phases 1 to 4.
-- [ ] **General README cleanup:** out-of-date numbers, repeated explanations, tables that run past the screen, the long Known limitations section, and anything that reads like a changelog. This is the same work as getting the README to about 150 lines.
+- [x] **Mark the plugins that are not ready as drafts** (`asteroid_finder`, `rubin_followup`) instead of deleting them: a `status = "draft"` attribute on the plugin class, a status column in the README table, a banner on each plugin page, `--list-plugins` and the mission header and log saying "DRAFT", and a refusal to command a real telescope unless `ASTRONOMO_ALLOW_DRAFT_PLUGINS=1`. The default plugin is now `variable_stars`. Done 2026-11-20. Revisit deleting them if keeping four plugins green slows Phases 1 to 5.
+- [x] **General README cleanup:** done 2026-11-21 with the cut above. The two overlapping lists in [status](docs/status.md#what-is-not-real-yet) became one, the wide tables were removed, and the repeated "what has been seen" text is now one block at the top.
 
-*Done when:* every topic has one home, no two pages explain the same setting, the README is about 150 lines and its examples are variable-star visits, and the docs test passes.
+*Done when:* every topic has one home, no two pages explain the same setting, the README is about 150 lines and its examples are variable-star visits, and the docs test passes. **Done 2026-11-21.**
 
 #### Phase 1.6: Package the result
 
@@ -90,6 +105,7 @@ The goal is to package results for submission to the citizen-science networks. A
 
 #### Phase 1.7: Go public
 
+- [ ] **Check the recreated repository first.** On 2026-11-21 the repository was recreated with one clean commit (the old one is kept privately). Turn private vulnerability reporting on again (it was on, 2026-11-14), confirm the `tests` workflow runs and passes on the new repository, and recreate any old issue that is still wanted (three were recreated; the rest stay in the old repository).
 - [ ] Make the repository public.
 - [ ] **Branch protection on `main`:** block force-push and deletion, and require the `tests` check. Tried 2026-11-14: GitHub returned 403, "Upgrade to GitHub Pro or make this repository public". It waits on the plan or on going public.
 
@@ -104,13 +120,13 @@ The goal is to package results for submission to the citizen-science networks. A
 
 ### Phase 2: First clean night
 
-**Goal:** one supervised variable-star visit that finishes with nothing assumed, and leaves a recipe that someone else could repeat. The order and commands are in [the first-mission note](docs/first-light/06-first-mission.md).
+**Goal:** one supervised variable-star visit that finishes with nothing assumed, and leaves a recipe that someone else could repeat. The order and commands are in [the first-clean-night runbook](docs/runbooks/first-clean-night.md).
 
 **Done:** connect and hardware check (2026-11-13, again over station mode 2026-11-20); the pointing check, a local plate solve and a corrected slew (2026-11-18, twice); autofocus (2026-11-16); the first-frame view and per-frame watch; a colour term; the 70 degree altitude cap; two 12-frame visits that finished and matched Gaia G (2026-11-18). On 2026-11-20 the telescope was reached over the home network, with the internet reachable at the same time (bench only). Detail: [journal](docs/journal.md).
 
 #### Phase 2.1: Keep the telescope awake while connected
 
-**Why:** a clean night must not end because the scope went to sleep or dropped the connection while the computer was busy or waiting (a weather wait, a slow reduction call, a pause between steps). Today the controller sends a status ping every 8 seconds during long waits inside a mission (`HEARTBEAT_S` in `tools/telescope.py`, marked there as unconfirmed that it is needed). It is a fixed constant, not a setting, and nothing says what the S50 itself does when it is left idle (its own auto-off or sleep timer is not recorded in the [hardware questions](docs/first-light/05-first-light-checklist.md)).
+**Why:** a clean night must not end because the scope went to sleep or dropped the connection while the computer was busy or waiting (a weather wait, a slow reduction call, a pause between steps). Today the controller sends a status ping every 8 seconds during long waits inside a mission (`HEARTBEAT_S` in `tools/telescope.py`, marked there as unconfirmed that it is needed). It is a fixed constant, not a setting, and nothing says what the S50 itself does when it is left idle (its own auto-off or sleep timer is not recorded in the [hardware questions](docs/hardware-questions.md)).
 
 - [ ] **Find out what the S50 does when idle,** over Alpaca and station mode: how long until it sleeps, powers down or drops the connection, with the heartbeat off and on. Write the answer into the hardware questions.
 - [ ] **Keep it awake for as long as Astronomo is connected,** including waits that today have no ping (between plan start and slew, a weather wait while still connected, a slow outside call during reduction).
@@ -121,27 +137,28 @@ The goal is to package results for submission to the citizen-science networks. A
 
 #### Phase 2.2: A recipe for repeating the observation
 
-**Is this the same as the mission log?** No, though they share a source. The mission log is the account of one night after the fact: what the telescope did and what came of it. A recipe is the opposite direction: everything another person needs to make the same observation, and to know whether they got the same thing. Today the mission record holds much of this but nothing gathers it, and nothing can be turned back into a plan. The recipe is a section of the 3.2 package next to the log, and a file a program can read.
+**Is this the same as the mission log?** No, though they share a source. The mission log is the account of one night after the fact: what the telescope did and what came of it. A recipe is the opposite direction: everything another person needs to make the same observation, and to know whether they got the same thing. Today the mission record holds much of this but nothing gathers it, and nothing can be turned back into a plan. The recipe is a section of the findings package (1.6) next to the log, and a file a program can read.
 
 - [ ] **What the recipe holds:** the target (name, coordinates, which network list chose it and why), the site, the observing window and the conditions that were accepted, the equipment (telescope model, firmware version, camera settings), the exposure, gain, frame count and cadence, the focus and pointing steps taken and what they measured, the comparison stars, the reduction settings, and the Astronomo version, the settings that were in force (which `Settings.public_dict()` already gathers) and identifiers for the input data (catalogue, release and date).
-- [ ] **A human-readable page and a machine-readable file** (`recipe.json`). The page also says which manual steps a person does on the telescope, linking [the runbook](docs/first-light/06-first-mission.md) rather than copying it.
-- [ ] **`python main.py --plan-from-recipe FILE`** creates a plan with the same settings, so a second person (or the same one, next season) repeats the night.
-- [ ] This also covers the reproducibility record that was in [Phase 4.3](#phase-4-steady-and-unattended): code version, config and input data identifiers are stored with each result.
+- [ ] **A human-readable page and a machine-readable file** (`recipe.json`). The page also says which manual steps a person does on the telescope, linking [the runbook](docs/runbooks/first-clean-night.md) rather than copying it.
+- [ ] `**python main.py --plan-from-recipe FILE`** creates a plan with the same settings, so a second person (or the same one, next season) repeats the night.
+- [ ] This also covers the reproducibility record that was in [Phase 4.2](#phase-4-claims-you-can-defend): code version, config and input data identifiers are stored with each result.
 
 *Done when:* in simulation, a mission's recipe loads into a plan whose settings match the original, a test covers it, and the real clean-night mission has a recipe that was read by someone who did not run it.
 
 #### Phase 2.3: Run the clean visit
 
-- [ ] On the home network, with `ASTRONOMO_ASSUME_CLEAR` unset: 40 frames, a target under about 70 degrees, a forecast the mission fetched itself, the VizieR mirror reached during the run, an AAVSO Extended draft written on that run, and the telescope parked. This closes [issue 7](https://github.com/dstroms/astronomo/issues/7). It is the first time a whole mission runs over station mode. Also unseen: whether the address and the Alpaca switch survive a power cycle. If `seestar.local` stops resolving, look the address up again.
+- [ ] On the home network, with `ASTRONOMO_ASSUME_CLEAR` unset: 40 frames, a target under about 70 degrees, a forecast the mission fetched itself, the VizieR mirror reached during the run, an AAVSO Extended draft written on that run, and the telescope parked. It is the first time a whole mission runs over station mode. Also unseen: whether the address and the Alpaca switch survive a power cycle. If `seestar.local` stops resolving, look the address up again.
 
 *Done when:* the visit finished with nothing assumed, and the magnitude agrees with the published value within its quoted error, or the disagreement is explained.
 
 #### Phase 2.4: Answer the open hardware questions
 
-- [ ] **Fill the rows this night answers** ([open hardware questions](docs/first-light/05-first-light-checklist.md)): the Bayer pattern (row 19), the exposure-start time against a clock (row 20), the longitude sign (row 21), the picture compared with the Seestar app's (row 18), Sun, Moon, altitude and the mount's slew limit against a planetarium (row 15), the free-space and dew checks letting a good night continue, and the dashboard seen showing the first frame. Alpaca selects no filter and has no plate-solve call, so those rows stay open by design. Close the firmware decision box when the Alpaca rows are filled.
+- [ ] **Fill the rows this night answers** ([open hardware questions](docs/hardware-questions.md)): the Bayer pattern (row 19), the exposure-start time against a clock (row 20), the longitude sign (row 21), the picture compared with the Seestar app's (row 18), Sun, Moon, altitude and the mount's slew limit against a planetarium (row 15), the free-space and dew checks letting a good night continue, and the dashboard seen showing the first frame. Alpaca selects no filter and has no plate-solve call, so those rows stay open by design. Close the firmware decision box when the Alpaca rows are filled.
 - [ ] **See the two cases not yet seen:** a first slew that is already on the chip, and an unsolved frame that stops the night.
+- [ ] **See a transient fault on a real run,** a dropped network or telescope link, and check that the mission retries and carries on instead of failing on the first occurrence. The retries are built, and have only met simulated faults. If no fault happens on its own, write down that it was not seen.
 
-*Done when:* every row this night can answer is answered, and both cases have been seen or are written down as not seen.
+*Done when:* every row this night can answer is answered, and the two cases and a transient fault have been seen or are written down as not seen.
 
 #### Phase 2.5: Settle the guessed settings
 
@@ -156,7 +173,7 @@ The goal is to package results for submission to the citizen-science networks. A
 - [ ] A 40-frame variable-star visit has finished on a physical Seestar, supervised, with nothing assumed, on a star with a published magnitude, and the magnitude agrees within its quoted error or the disagreement is explained (2.3).
 - [ ] The driver, frame retrieval and parking are confirmed against real firmware, and the README no longer says "untested" for them. Pointing and focus are verified on the run, and a failed check stops the mission with a clear message (2.3, 2.4).
 - [ ] Weather, Sun, Moon, window and altitude checks have been seen working on the real mount, not only in simulation (2.4).
-- [ ] A transient network or telescope error does not kill a mission on its first occurrence (built; unproven on a real fault).
+- [ ] A transient network or telescope error does not kill a mission on its first occurrence (built; unproven on a real fault) (2.4).
 - [ ] The telescope stays awake for the whole visit with keep-awake on, and it can be turned off (2.1).
 - [ ] The clean night's mission has a recipe that loads into a plan with the same settings, and someone who did not run the night has read it (2.2).
 - [ ] The README's limitations are updated with what the run showed (2.5).
@@ -196,49 +213,77 @@ A mission must not sit in limbo because an outside service failed. Today a call 
 - [ ] In testing, a mission with a failing outside call ends in a named waiting state and the Retry button finishes it (3.1).
 - [ ] The file's own failure modes are known: what the AAVSO rejected or warned about, written down (3.2).
 
-### Phase 4: Steady and unattended
+### Phase 4: Claims you can defend
 
-**Goal:** visits run without someone watching, and their science claims survive scrutiny (level C). Still no language-model changes.
+**Goal:** every result says how sure it is and how it could be wrong, and a claim is stated no more strongly than the evidence allows. Still no language-model changes. This comes before unattended running ([Phase 5](#phase-5-unattended-and-automatic)): a visit nobody watches should already state its error.
 
-**Done (built and tested in simulation; not seen on the mount):** `python main.py --schedule` lists due plans and resumes a weather wait, and a plan starts only with `--confirm ID` (self-start is off and refused unless `ASTRONOMO_UNATTENDED_CONFIRMED` is set); the plan life cycle and the hand-off from a plan (`--from-plan ID`); rescheduling on weather; free-space, dew and battery checks; the site profile and interlocks; the React dashboard over FastAPI with the Opportunities view, which lists network targets with reachability, a window and a labelled impact estimate, and saves a window as a plan.
-
-#### Phase 4.1: Self-start and multi-day missions
-
-- [ ] **Self-start, only after the owner confirms the mount.** `ASTRONOMO_UNATTENDED_CONFIRMED` is the record that the interlocks and parking have been seen on this mount. Nothing in the repository sets it.
-- [ ] **Multi-day missions.** Depends on the scheduler. Watch checkpoint growth (`observations` accumulates in state) and move bulky data out of state if it gets large.
-
-*Done when:* a multi-night mission starts, sleeps through bad weather, resumes and finishes with nobody touching it.
-
-#### Phase 4.2: Honest photometry
+#### Phase 4.1: Honest photometry
 
 - [ ] Report aperture dependence as a systematic error, use mid-exposure times, and calibrate the e⁻/ADU assumption for the Seestar.
 
 *Done when:* results carry a quoted systematic error rather than a bare number.
 
-#### Phase 4.3: Science-claim verification
+#### Phase 4.2: Science-claim verification
 
 A result may only be stated as strongly as the evidence allows, enforced in code, so neither a template nor the model can overstate it.
 
 - [ ] *Claim levels* with explicit criteria (`detected`, `consistent with known object`, `unidentified candidate`, `independently confirmed`), shown in the mission log, upload-file notes, the findings summary and the dashboard. Nothing is promoted to `independently confirmed` automatically.
-- [ ] *Known-answer regression tests* in CI: the ZTF archive replay and a variable-star known answer become committed tests with expected values and tolerances. Transit cases are in [Phase 5](#phase-5-transits).
+- [ ] *Known-answer regression tests* in CI: the ZTF archive replay and a variable-star known answer become committed tests with expected values and tolerances. Transit cases are in [Phase 6](#phase-6-transits).
 - [ ] *Injection-recovery and null fields on real frames,* to measure sensitivity and the false-positive rate. Today this exists only on synthetic frames.
 - [ ] *Human review gate:* nothing leaves the system without a person signing off on the claim level. The reproducibility record (code version, config, input data) is built in [Phase 2.2](#phase-2-first-clean-night).
 
 *Done when:* every upload file and findings summary states a claim level computed in code from the evidence, known-answer regression tests run in CI, and a measured false-positive rate and sensitivity on real frames are quoted wherever a candidate is reported.
 
-#### Phase 4.4: A credible "unidentified"
+**Exit criteria (all required):**
 
-- [ ] Consult SkyBoT and MPC, link visits across nights, and measure sensitivity on real frames. Without this, no discovery claim is allowed.
+- [ ] Results carry a quoted systematic error rather than a bare number (4.1).
+- [ ] Every upload file and findings summary states a claim level, computed in code from the evidence, and known-answer tests run in CI (4.2).
+- [ ] A measured false-positive rate and sensitivity on real frames are quoted wherever a candidate is reported (4.2).
 
-*Done when:* an "unidentified" track in a real-sky run has been checked against SkyBoT and MPC.
+### Phase 5: Unattended and automatic
 
-#### Phase 4.5: Safety for unattended use
+**Goal:** visits run without someone watching, and the nights are planned without a person making each plan (level C: steady variable-star visits as the regular product). Still no language-model changes. A person still approves what runs, and the interlocks stay in code.
+
+**Done (built and tested in simulation; not seen on the mount):** `python main.py --schedule` lists due plans and resumes a weather wait, and a plan starts only with `--confirm ID` (self-start is off and refused unless `ASTRONOMO_UNATTENDED_CONFIRMED` is set); the plan life cycle and the hand-off from a plan (`--from-plan ID`); rescheduling on weather; free-space, dew and battery checks; the site profile and interlocks; the React dashboard over FastAPI with the Opportunities view, which lists network targets with reachability, a window and a labelled impact estimate, and saves a window as a plan.
+
+#### Phase 5.1: Self-start and multi-day missions
+
+- [ ] **Self-start, only after the owner confirms the mount.** `ASTRONOMO_UNATTENDED_CONFIRMED` is the record that the interlocks and parking have been seen on this mount. Nothing in the repository sets it.
+- [ ] **Multi-day missions.** Depends on the scheduler. Watch checkpoint growth (`observations` accumulates in state) and move bulky data out of state if it gets large. This is one mission that survives days. A goal pursued over many nights, with the nights combined, is a campaign ([Phase 5.3](#phase-53-campaigns-one-goal-over-many-nights)).
+
+*Done when:* a multi-night mission starts, sleeps through bad weather, resumes and finishes with nobody touching it.
+
+#### Phase 5.2: Safety for unattended use
 
 - [ ] A window that ends mid-sequence (the window is checked when a target starts), and an automatic obstruction mask (a person can draw a horizon by hand). Retries have only met simulated faults.
 
 *Done when:* a run whose window closes mid-sequence stops cleanly and parks, seen on the mount or in a simulation that models it.
 
-#### Phase 4.6: Ready for another owner
+#### Phase 5.3: Campaigns: one goal over many nights
+
+Today a mission is one run: one night, one or a few targets. A **campaign** (a meta mission) is one goal pursued over many nights, for example 15 nights on one variable star, with the nights observed to the same recipe, combined, and packaged together. It builds on the scheduler (5.1), the recipe ([Phase 2.2](#phase-2-first-clean-night)), the findings package ([Phase 1.6](#phase-1-public-release)) and quoted systematic errors (4.1).
+
+- [ ] **A campaign record.** The target or targets, the goal and its stop rule (a number of nights or visits, coverage of the star's cycle, or an end date), the cadence wanted (for example one visit a night) and the windows allowed. A campaign owns one ordinary mission per night. Each night's mission keeps its own full record and is never rewritten by the campaign.
+- [ ] **Hold the setup fixed, and say when it is not.** The same channel, comparison stars, exposure and reduction settings on every night, taken from the recipe. A night observed with different settings is flagged and left out of the combination until a person says otherwise. It is never merged silently.
+- [ ] **Combine the nights.** One light curve across nights with every visit kept, and a per-night check that the comparison stars agree from night to night. A night that disagrees is flagged. Anything derived from the combination (a period, a time of minimum) carries the systematic error from 4.1. Nothing is averaged away.
+- [ ] **Package the campaign.** One folder: an upload file with every visit as its own line, as today, a campaign findings summary (nights observed, nights lost and why, the combined light curve, and what it does and does not show) and a campaign log. It extends the one-folder-per-mission package in 1.6.
+- [ ] **Lose a night without failing.** A cloudy night is recorded as lost, with the reason, and the next window is planned. The campaign ends on its stop rule, not on the first miss.
+- [ ] **A campaign page on the dashboard:** nights done, nights lost, the next planned visit and the combined light curve.
+
+*Done when:* in simulation, a 15-night campaign on one star with several cloudy nights finishes; its folder holds one upload file with a line for every observed visit, a combined light curve and a findings summary that names each lost night; and a test shows a night observed with different settings is flagged and not merged. A campaign on the real telescope follows once Phases 2 and 3 are done.
+
+#### Phase 5.4: Plan the night without a person
+
+Today a person reads the Opportunities tab, picks a window, saves it as a plan and confirms it. The aim is that Astronomo proposes the plans and a person approves them. The planner here is rules in code, with no language model. It does not depend on the `generate_hypothesis` node: it works before a mission exists, and a mission started from a plan observes exactly that plan, so `generate_hypothesis` takes the plan's target as given, validates it and writes the rationale. The planner and a run started with no plan both draw on the plugin's `generate_targets`, so there is one candidate list. [Phase 7.1](#phase-7-autonomy) later lets a model rank the same candidates, with this planner as its fallback.
+
+- [ ] **A planner.** On a schedule, or with a command such as `python main.py --plan-tonight`, it reads the same inputs as the Opportunities view (reachability, window, forecast, impact estimate, and the visits any campaign in 5.3 still needs) and writes proposed plans: ranked, with the reason for each. It only proposes. Nothing starts. The same inputs give the same proposals, and a test checks it.
+- [ ] **A `PROPOSED` status for plans,** and a dashboard view of proposed plans to approve or reject. Approving uses the existing plan life cycle (`--confirm`). A rejected proposal is remembered, so it is not proposed again.
+- [ ] **Limits in code.** A cap on plans per night and per week, no overlapping windows, the site interlocks and the weather forecast respected, and a rule that a proposal cannot lower any interlock.
+- [ ] **Optional auto-approval, off by default.** A person can allow plans of one named kind (for example a campaign visit) to be approved without them, and only after the mount has been confirmed (`ASTRONOMO_UNATTENDED_CONFIRMED`, 5.1).
+
+*Done when:* in simulation, with the model off, the planner turns a week of Opportunities and a forecast into proposed plans for a campaign and for ad hoc targets; a person approves one in the dashboard and it runs through `--from-plan`; nothing starts by itself unless auto-approval is on for that kind of plan and the mount is confirmed; and the same inputs give the same proposals.
+
+#### Phase 5.5: Ready for another owner
 
 - [ ] **Package the plate-solver indexes.** Fetch the Seestar index set (Tycho-2 4107 to 4112, about 345 MB) into a data folder and call the operating system's `solve-field`, so another owner does not need this Mac's install. The indexes stay out of the repository.
 - [ ] **Contribution panel on the dashboard** (after [Phase 3](#phase-3-first-accepted-file)): timings and magnitudes prepared, reviewed, sent and accepted, from the manifest and a person's own record of acceptance.
@@ -247,54 +292,52 @@ A result may only be stated as strongly as the evidence allows, enforced in code
 
 **Exit criteria (all required):**
 
-- [ ] A multi-night mission starts, sleeps through bad weather, resumes and finishes with nobody touching it (4.1).
-- [ ] Results carry a quoted systematic error rather than a bare number (4.2).
-- [ ] Every upload file and findings summary states a claim level, computed in code from the evidence, and known-answer tests run in CI (4.3).
-- [ ] A measured false-positive rate and sensitivity on real frames are quoted wherever a candidate is reported (4.3).
-- [ ] An "unidentified" track in a real-sky run has been checked against SkyBoT and MPC (4.4).
-- [ ] The mid-sequence window case is handled (4.5).
-- [ ] The contribution panel shows prepared, sent and accepted counts, and a second owner can solve frames without this Mac's install (4.6).
+- [ ] A multi-night mission starts, sleeps through bad weather, resumes and finishes with nobody touching it (5.1).
+- [ ] The mid-sequence window case is handled (5.2).
+- [ ] A campaign over many nights, with some lost to weather, finishes in simulation with one combined package, and a night observed with different settings is flagged and not merged (5.3).
+- [ ] With the model off, the planner proposes tonight's plans and a person's approval starts one (5.4).
+- [ ] The contribution panel shows prepared, sent and accepted counts, and a second owner can solve frames without this Mac's install (5.5).
 
-### Phase 5: Transits
+### Phase 6: Transits
 
 **Goal:** a known transit observed on the telescope with its mid-time inside its error (level A), a measured timing error, and transit timing as a regular product, kept only while its error bar holds.
 
-**Why later:** a dip of 1 to 2 % is about the size of the noise on a 10-minute stack at V 11 to 12, a transit needs about four hours of tracking on an alt-az mount, and its timing error is not measured yet (the Opportunities page assumes 3 minutes). The variable-star visit is shorter and the signal is far larger, so it goes first. Nothing in Phases 1 to 4 needs a transit.
+**Why later:** a dip of 1 to 2 % is about the size of the noise on a 10-minute stack at V 11 to 12, a transit needs about four hours of tracking on an alt-az mount, and its timing error is not measured yet (the Opportunities page assumes 3 minutes). The variable-star visit is shorter and the signal is far larger, so it goes first. Nothing in Phases 1 to 5 needs a transit.
 
 **Done (simulation):** the transit plugin with differential photometry, field-rotation correction, an AAVSO Exoplanet writer (`Rnflux`), the Opportunities transit lists with a first-light preset and a seven-day cloud forecast per window, and the staleness ranking from ExoClock, Exoplanet Watch and the NASA TTV flag (all fetched live; ExoClock 776 of 776 planets on 2026-11-14). Plugin page: [transit](docs/plugins/transit.md).
 
-#### Phase 5.1: Observe a known transit (level A)
+#### Phase 6.1: Observe a known transit (level A)
 
-- [ ] Cover the mid-time and time on either side. Use a deep, well-known planet (the first-light preset). The run is only a verification if the answer is known beforehand. The checklist is [the first-transit note](docs/first-light/08-first-transit.md).
+- [ ] Cover the mid-time and time on either side. Use a deep, well-known planet (the first-light preset). The run is only a verification if the answer is known beforehand. The checklist is [the first-transit runbook](docs/runbooks/first-transit.md).
 
 *Done when:* the mid-time agrees with the published ephemeris within its combined error and within about 3 minutes.
 
-#### Phase 5.2: Measure the timing error
+#### Phase 6.2: Measure the timing error
 
 - [ ] **Write the timing error down** (open hardware question 14) and replace `ASTRONOMO_TRANSIT_ASSUMED_ERR_MIN` (default 3 minutes) in the impact estimate with it.
 - [ ] **Error calibration:** the pull RMS over timings is about 1. Build a short O-C series on a handful of planets (for example 5 planets with at least 4 timings each over a season) rather than scattered points.
 
 *Done when:* the Opportunities estimate uses the measured error, and the pull RMS is reported with the planets it came from.
 
-#### Phase 5.3: An AAVSO Exoplanet report
+#### Phase 6.3: An AAVSO Exoplanet report
 
 - [ ] From the real frames, with the first frame attached and the target (T) and comparison stars (C) marked, through the AAVSO's own validator. The header has an empty `#DETREND_PARAMETERS=` that has not been checked.
 
 *Done when:* the report passes the AAVSO's validator.
 
-#### Phase 5.4: Field rotation over a long series
+#### Phase 6.4: Field rotation over a long series
 
 - [ ] Measure field rotation across the long series, re-set the rotation limits from it, and keep or refuse the light curve on the result.
 
 *Done when:* the limits are set from a real series and the keep-or-refuse rule is tested.
 
-#### Phase 5.5: Build a set of known answers
+#### Phase 6.5: Build a set of known answers
 
 - [ ] **A known-answer set for transits:** a deep, clean real transit, a shallower real transit and a real night with no transit, so the tests cover both "does it miss a weak signal" and "does it invent one". Add a physical-model cross-check (limb-darkened, from published parameters). The pipeline's trapezoid duration reads short on a limb-darkened transit, so fit a physical shape or label the number as a trapezoid duration.
 
 *Done when:* the tests cover a weak signal and an empty night, and the duration is either fitted or labelled.
 
-#### Phase 5.6: Networks
+#### Phase 6.6: Networks
 
 - [ ] ExoClock asks for 5-inch-class telescopes and will not list a Seestar, so Astronomo applies its own brightness and depth limits. Find the route for Exoplanet Watch submissions.
 
@@ -302,26 +345,26 @@ A result may only be stated as strongly as the evidence allows, enforced in code
 
 **Exit criteria (all required):**
 
-- [ ] A transit on a physical Seestar covers the mid-time, and the result agrees with the published ephemeris (level A) (5.1).
-- [ ] The timing error is measured and the Opportunities estimate uses it (5.2).
-- [ ] An AAVSO Exoplanet report from the real frames has passed the AAVSO's own validator (5.3).
+- [ ] A transit on a physical Seestar covers the mid-time, and the result agrees with the published ephemeris (level A) (6.1).
+- [ ] The timing error is measured and the Opportunities estimate uses it (6.2).
+- [ ] An AAVSO Exoplanet report from the real frames has passed the AAVSO's own validator (6.3).
 - [ ] The decision rules hold: if the systematic timing error is above about 5 minutes and cannot be fixed, do not scale up transits and say so in the README. If the pull RMS is clearly above 1 and cannot be explained, fix the quoted errors or stop offering the file.
 
-### Phase 6: Autonomy
+### Phase 7: Autonomy
 
-**Goal:** give the language model a small amount of real authority inside the deterministic graph, safely; then test findings and loop; then measure which model to use. The graph stays the orchestrator and the safety spine ([why](docs/decisions.md#orchestration-deterministic-graph-not-an-llm-agent-current-state-2026-10)). Needs the scheduler and claim levels from Phase 4.
+**Goal:** give the language model a small amount of real authority inside the deterministic graph, safely; then test findings and loop; then measure which model to use. The graph stays the orchestrator and the safety spine ([why](docs/decisions.md#orchestration-deterministic-graph-not-an-llm-agent-current-state-2026-10)). Needs the claim levels from Phase 4 and the scheduler from Phase 5.
 
-#### Phase 6.1: Bounded decisions
+#### Phase 7.1: Bounded decisions
 
-- [ ] Split the model call out of `generate_hypothesis` into its own node, so it is replaceable, skippable and testable alone. Add per-node model settings (`LLM_*` overrides).
-- [ ] `propose_mission`: choose and order targets from the plugin's candidate list. Schema-constrained output, validated in code, allowlist only, with the current priority sort as the fallback.
+- [ ] Split the model call out of `generate_hypothesis` into its own node, so it is replaceable, skippable and testable alone. Add per-node model settings (`LLM_`* overrides).
+- [ ] `propose_mission`: choose and order targets from the plugin's candidate list, as a model-assisted step in the planner ([5.4](#phase-54-plan-the-night-without-a-person)) and in a run started with no plan. A run started from a plan keeps its planned target. Schema-constrained output, validated in code, allowlist only, with the rule-based planner from [Phase 5.4](#phase-54-plan-the-night-without-a-person) as the fallback.
 - [ ] Experiment design: extend it so the model can propose how to observe (exposure, frame count, cadence) within bounds each plugin declares. Code validates every value and falls back to the plugin's default plan.
 - [ ] `evaluate_data`: after `reduce_data`, decide accept, re-observe once, or skip, from the digest only. The fallback is always accept.
-- [ ] A `PROPOSED` status and a plan view (targets, order, rationale), once `propose_mission` exists.
+- [ ] Show the model's rationale in the proposed-plan view that 5.4 builds (targets, order, rationale).
 
-*Done when:* both nodes run in real and simulated missions, with invalid or missing output falling back to today's behaviour; the model never calls hardware, and a test enforces that; per-node model selection works; a plan outside a plugin's bounds is rejected and replaced.
+*Done when:* the split node, `propose_mission` and `evaluate_data` run in real and simulated missions, with invalid or missing output falling back to today's behaviour; the model never calls hardware, and a test enforces that; per-node model selection works; a plan outside a plugin's bounds is rejected and replaced.
 
-#### Phase 6.2: Close the loop
+#### Phase 7.2: Close the loop
 
 - [ ] A post-analysis decision node with a fixed set of actions (`done`, `follow_up`, `redesign`, `drop`), schema-constrained, with `done` as the fallback.
 - [ ] Hard limits: a maximum number of rounds per mission and per target, a wall-clock and token budget, and a rule that the loop cannot lower any safety interlock. The loop ends in code, never because the model says so.
@@ -330,7 +373,7 @@ A result may only be stated as strongly as the evidence allows, enforced in code
 
 *Done when:* in simulation, a mission follows up a marginal candidate, confirms or rejects it on the second round, and stops at the round limit if it does not converge; an invalid decision falls back to `done`; a test shows the loop cannot bypass any interlock; every mission log lists the rounds and the final claim level.
 
-#### Phase 6.3: Measure the models
+#### Phase 7.3: Measure the models
 
 - [ ] Fixtures and scoring: expected-against-chosen target order, and accept or reject accuracy on labelled reductions.
 - [ ] Same-task comparison (which model is best at a task) and cross-task comparison (one orchestrating model with others on subtasks).
@@ -339,21 +382,21 @@ A result may only be stated as strongly as the evidence allows, enforced in code
 
 **Exit criteria (all required):**
 
-- [ ] Phases 6.1, 6.2 and 6.3 are each done by their own "done when".
+- [ ] Phases 7.1, 7.2 and 7.3 are each done by their own "done when".
 - [ ] A test shows that no model output can reach the hardware or lower a safety check.
 - [ ] With the model switched off, every mission still behaves as it did before this phase.
 
-### Phase 7: Reach
+### Phase 8: Reach
 
-**Goal:** expand what the system can do. Each item is large or vague, or depends on trust earned in earlier phases. Define it properly before starting it. The exit criteria below are provisional, and are to be rewritten when Phase 6 is done.
+**Goal:** expand what the system can do. Each item is large or vague, or depends on trust earned in earlier phases. Define it properly before starting it. The exit criteria below are provisional, and are to be rewritten when Phase 7 is done.
 
 **Done:** the frontend migration (2026-11): React over `/api/v1`, Streamlit removed.
 
-#### Phase 7.1: Plugin directory UI
+#### Phase 8.1: Plugin directory UI
 
 - [ ] List available plugins and what they do. Fold it into the Opportunities view rather than a separate page.
 
-#### Phase 7.2: Sending, per network
+#### Phase 8.2: Sending, per network
 
 The preparation is done. Depends on claim levels and confirmation observations.
 
@@ -361,24 +404,28 @@ The preparation is done. Depends on claim levels and confirmation observations.
 - [ ] A human sign-off gate that records who approved which file, then optional sending (AAVSO WebObs, MPC).
 - [ ] More destinations, each researched first: the Exoplanet Transit Database, the Transient Name Server, and any BAA list with a public endpoint.
 
-#### Phase 7.3: More Pro-Am science cases
+#### Phase 8.3: More Pro-Am science cases
 
-- [ ] Asteroid light curves, comets, and supernova or nova follow-up (level D, which reuses the variable-star photometry). The candidates and what each needs are in [science options](docs/first-light/07-science-options.md#appendix-candidate-science-cases-for-a-50-mm-telescope). Rubin follow-up has not been run live, and most alerts are fainter than a 50 mm telescope reaches. The asteroid plugin proposes no anomalies, and the Rubin plugin screens only for outbursts.
+- [ ] Asteroid light curves, comets, and supernova or nova follow-up (level D, which reuses the variable-star photometry). The candidates and what each needs are in [science options](docs/notes/science-options.md#appendix-candidate-science-cases-for-a-50-mm-telescope). Rubin follow-up has not been run live, and most alerts are fainter than a 50 mm telescope reaches. The asteroid plugin proposes no anomalies, and the Rubin plugin screens only for outbursts.
+- [ ] **A credible "unidentified" for asteroids** (moved here from the old Phase 4, because it needs the asteroid plugin on the real sky and that plugin is a draft): consult SkyBoT and the MPC, link visits across nights, and measure sensitivity on real frames. Without this, no discovery claim is allowed.
 
-#### Phase 7.4: An MPC observatory code, only if the reach allows it
+*Done when:* the case chosen has produced a file a network accepted, and any asteroid "unidentified" track in a real-sky run has been checked against SkyBoT and the MPC.
+
+#### Phase 8.4: An MPC observatory code, only if the reach allows it
 
 - **Decided 2026-11-20: Astronomo moves forward without an MPC code.** Nothing before this phase needs one, and the asteroid plugin keeps writing `DRAFT_` ADES files until one exists.
-- [ ] The rule needs ten numbered near-Earth asteroids fainter than magnitude 16, each on two nights, which a 50 mm telescope may not reach. Measure the reach first. If it is realistic, build the qualifying ADES file: station `XXX`, the `Long./Lat./Alt.` comment, 3 to 5 positions each with magnitudes. Notes: [04-mpc-observatory-code.md](docs/first-light/04-mpc-observatory-code.md).
 
-#### Phase 7.5: Multi-telescope coordination
+- [ ] The rule needs ten numbered near-Earth asteroids fainter than magnitude 16, each on two nights, which a 50 mm telescope may not reach. Measure the reach first. If it is realistic, build the qualifying ADES file: station `XXX`, the `Long./Lat./Alt.` comment, 3 to 5 positions each with magnitudes. Notes: [mpc-observatory-code.md](docs/notes/mpc-observatory-code.md).
+
+#### Phase 8.5: Multi-telescope coordination
 
 - [ ] Needs the scheduler and a decision about whether telescopes are separate missions or one plan.
 
 **Exit criteria (provisional; all required):**
 
 - [ ] A second science case (level D) has produced a file that a network accepted.
-- [ ] A file has been sent through a network's real channel after a person's recorded sign-off (7.2).
-- [ ] A plugin written by someone other than the author runs and is listed in the plugin directory (7.1).
+- [ ] A file has been sent through a network's real channel after a person's recorded sign-off (8.2).
+- [ ] A plugin written by someone other than the author runs and is listed in the plugin directory (8.1).
 - [ ] Each remaining item above is either built to its own "done when", or dropped here with a reason.
 
 ## Backlog
@@ -397,32 +444,36 @@ Ideas worth keeping that block nothing. They belong to the Opportunities page an
 
 Every document is listed here, with what it is for and where it connects to this roadmap. **Adding a document means adding a row.**
 
-| Document | What it is | Roadmap link |
-| --- | --- | --- |
-| [README.md](README.md) | Front page: mission, status, quick start, limitations | [Mission](#mission), [Phases](#phases) |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Ground rules, setup, how to help and report | [Phase 1](#phase-1-public-release) |
-| [SECURITY.md](SECURITY.md) | How to report a safety or security problem privately, and what is on purpose | [Phase 1](#phase-1-public-release) |
-| [docs/first-light/01-aavso-observer-code.md](docs/first-light/01-aavso-observer-code.md) | AAVSO account, observer code, site and equipment | [Phase 3](#phase-3-first-accepted-file): the AAVSO account, code, site and equipment |
-| [docs/first-light/03-firmware-and-authentication.md](docs/first-light/03-firmware-and-authentication.md) | Why the JSON-RPC handshake is not implemented, and which Alpaca server the driver uses | [Phase 2](#phase-2-first-clean-night): the firmware decision |
-| [docs/first-light/04-mpc-observatory-code.md](docs/first-light/04-mpc-observatory-code.md) | MPC observatory-code rules and whether a 50 mm scope can meet them | [Phase 7](#phase-7-reach): the MPC code |
-| [docs/first-light/05-first-light-checklist.md](docs/first-light/05-first-light-checklist.md) | Open hardware questions on the Alpaca path, including what the 2026-11-13 night answered | [Phase 2](#phase-2-first-clean-night): the hardware rows |
-| [docs/first-light/06-first-mission.md](docs/first-light/06-first-mission.md) | The runbook for the first clean night: a 40-frame variable-star visit on a real Seestar, and which results to write down | [Phase 2](#phase-2-first-clean-night): the clean night |
-| [docs/first-light/07-science-options.md](docs/first-light/07-science-options.md) | Every science option compared: success odds, value, and how much Astronomo already covers | [Phase 7](#phase-7-reach): which case to build next |
-| [docs/first-light/08-first-transit.md](docs/first-light/08-first-transit.md) | The first transit mission: what it needs, the checklist, and what has to be true before it is worth a night | [Phase 5](#phase-5-transits) |
-| [docs/real-hardware.md](docs/real-hardware.md) | What is untested, safety interlocks, smoke test, retries, setup checks | [Phase 2](#phase-2-first-clean-night) |
-| [docs/real-data.md](docs/real-data.md) | Archive replays, mission clocks, live-client checks against real services | [Phase 4](#phase-4-steady-and-unattended) and [Phase 5](#phase-5-transits): replays and live-client checks |
-| [docs/configuration.md](docs/configuration.md) | Every setting and where settings come from | all phases |
-| [docs/architecture.md](docs/architecture.md) | Code layout, the mission log writer, telemetry, headless pipeline and bundled UI | [Architecture evaluation](docs/decisions.md#architecture-evaluation-astronomo) |
-| [docs/api.md](docs/api.md) | Versioned HTTP API (`/api/v1`): the contract for any frontend | [Architecture evaluation](docs/decisions.md#architecture-evaluation-astronomo) |
-| [docs/status.md](docs/status.md) | What is real on a real telescope and what is not yet, and the eight-stage loop as it stands today | [Now](#now) |
-| [docs/journal.md](docs/journal.md) | Field journal: what happened on each real night, what was found, and the detailed notes behind the old task lists | [Phases](#phases) |
-| [docs/mission.md](docs/mission.md) | What Astronomo is for, what it holds itself to, the two "how we will know" ladders, and the north-star goal | [Mission](#mission) |
-| [docs/dashboard.md](docs/dashboard.md) | The dashboard's pages and design rules (colour, type, charts), and what is still open | [Phase 1.5](#phase-1-public-release): replaced the old design package |
-| [docs/decisions.md](docs/decisions.md) | Why it is built this way (participation over discovery, a deterministic graph) and the architecture strengths and gaps | [Phase 6](#phase-6-autonomy) |
-| [docs/models.md](docs/models.md) | Choosing a language model, cost controls, the data firewall | [Phase 6](#phase-6-autonomy) |
-| [docs/writing-a-plugin.md](docs/writing-a-plugin.md) | The plugin contract and how to simulate your experiment | [Phase 7](#phase-7-reach) |
-| [docs/plugins/transit.md](docs/plugins/transit.md) | The transit plugin: what its numbers mean | [Phase 5](#phase-5-transits) |
-| [docs/plugins/asteroid.md](docs/plugins/asteroid.md) | The asteroid plugin | [Phase 7](#phase-7-reach) |
-| [docs/plugins/rubin.md](docs/plugins/rubin.md) | The Rubin follow-up plugin | [Phase 7](#phase-7-reach) |
-| [docs/plugins/variable_stars.md](docs/plugins/variable_stars.md) | The variable-star plugin: one magnitude per visit, and what a listed window is | [Phase 2](#phase-2-first-clean-night) and [Phase 3](#phase-3-first-accepted-file) |
-| [docs/plugins/variable-star-feasibility.md](docs/plugins/variable-star-feasibility.md) | Why variable-star photometry is the stronger case than transits: evidence, the site census, and the risks still open | [North star](docs/mission.md#north-star-take-part-in-collaborative-pro-am-science), [Phase 2](#phase-2-first-clean-night) |
+
+| Document                                                                                                 | What it is                                                                                                               | Roadmap link                                                                                                              |
+| -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| [README.md](README.md)                                                                                   | Front page: mission, status, quick start, plugins, phase list                                                                   | [Mission](#mission), [Phases](#phases)                                                                                    |
+| [CONTRIBUTING.md](CONTRIBUTING.md)                                                                       | Ground rules, setup, how to help and report                                                                              | [Phase 1](#phase-1-public-release)                                                                                        |
+| [SECURITY.md](SECURITY.md)                                                                               | How to report a safety or security problem privately, and what is on purpose                                             | [Phase 1](#phase-1-public-release)                                                                                        |
+| [docs/runbooks/aavso-observer-code.md](docs/runbooks/aavso-observer-code.md)                 | AAVSO account, observer code, site and equipment                                                                         | [Phase 3](#phase-3-first-accepted-file): the AAVSO account, code, site and equipment                                      |
+| [docs/notes/firmware-and-authentication.md](docs/notes/firmware-and-authentication.md) | Why the JSON-RPC handshake is not implemented, and which Alpaca server the driver uses                                   | [Phase 2](#phase-2-first-clean-night): the firmware decision                                                              |
+| [docs/notes/mpc-observatory-code.md](docs/notes/mpc-observatory-code.md)               | MPC observatory-code rules and whether a 50 mm scope can meet them                                                       | [Phase 8](#phase-8-reach): the MPC code                                                                                   |
+| [docs/hardware-questions.md](docs/hardware-questions.md)             | Open hardware questions on the Alpaca path, including what the 2026-11-13 night answered                                 | [Phase 2](#phase-2-first-clean-night): the hardware rows                                                                  |
+| [docs/runbooks/first-clean-night.md](docs/runbooks/first-clean-night.md)                             | The runbook for the first clean night: a 40-frame variable-star visit on a real Seestar, and which results to write down | [Phase 2](#phase-2-first-clean-night): the clean night                                                                    |
+| [docs/notes/science-options.md](docs/notes/science-options.md)                         | Every science option compared: success odds, value, and how much Astronomo already covers                                | [Phase 8](#phase-8-reach): which case to build next                                                                       |
+| [docs/runbooks/first-transit.md](docs/runbooks/first-transit.md)                             | The first transit mission: what it needs, the checklist, and what has to be true before it is worth a night              | [Phase 6](#phase-6-transits)                                                                                              |
+| [docs/connect-a-seestar.md](docs/connect-a-seestar.md)                                                   | How a Seestar S50 Pro was connected: station mode, the router trap, the telescope's own Wi-Fi, the smoke test            | [Phase 2](#phase-2-first-clean-night): the network for the clean night                                                    |
+| [docs/real-hardware.md](docs/real-hardware.md)                                                           | What is untested, safety interlocks, smoke test, retries, setup checks                                                   | [Phase 2](#phase-2-first-clean-night)                                                                                     |
+| [docs/real-data.md](docs/real-data.md)                                                                   | Archive replays, mission clocks, live-client checks against real services                                                | [Phase 4](#phase-4-claims-you-can-defend), [Phase 5](#phase-5-unattended-and-automatic) and [Phase 6](#phase-6-transits): replays and live-client checks                |
+| [docs/configuration.md](docs/configuration.md)                                                           | Every setting and where settings come from                                                                               | all phases                                                                                                                |
+| [docs/architecture.md](docs/architecture.md)                                                             | The full diagrams, how a mission runs, code layout, mission log writer, telemetry                                        | [Architecture evaluation](docs/decisions.md#architecture-evaluation-astronomo)                                            |
+| [docs/api.md](docs/api.md)                                                                               | Versioned HTTP API (`/api/v1`): the contract for any frontend                                                            | [Architecture evaluation](docs/decisions.md#architecture-evaluation-astronomo)                                            |
+| [docs/status.md](docs/status.md)                                                                         | What is real on a real telescope and what is not yet, and the eight-stage loop as it stands today                        | [Now](#now)                                                                                                               |
+| [docs/journal.md](docs/journal.md)                                                                       | Field journal: what happened on each real night, what was found, and the detailed notes behind the old task lists        | [Phases](#phases)                                                                                                         |
+| [docs/mission.md](docs/mission.md)                                                                       | What Astronomo is for, what it holds itself to, the two "how we will know" ladders, and the north-star goal              | [Mission](#mission)                                                                                                       |
+| [docs/dashboard.md](docs/dashboard.md)                                                                   | The dashboard's pages and design rules (colour, type, charts), and what is still open                                    | [Phase 1.5](#phase-1-public-release): replaced the old design package                                                     |
+| [docs/decisions.md](docs/decisions.md)                                                                   | Why it is built this way (participation over discovery, a deterministic graph) and the architecture strengths and gaps   | [Phase 7](#phase-7-autonomy)                                                                                              |
+| [docs/models.md](docs/models.md)                                                                         | Choosing a language model, cost controls, the data firewall                                                              | [Phase 7](#phase-7-autonomy)                                                                                              |
+| [docs/writing-a-plugin.md](docs/writing-a-plugin.md)                                                     | The plugin contract and how to simulate your experiment                                                                  | [Phase 8](#phase-8-reach)                                                                                                 |
+| [docs/plugins/transit.md](docs/plugins/transit.md)                                                       | The transit plugin: what its numbers mean                                                                                | [Phase 6](#phase-6-transits)                                                                                              |
+| [docs/plugins/asteroid.md](docs/plugins/asteroid.md)                                                     | The asteroid plugin                                                                                                      | [Phase 8](#phase-8-reach)                                                                                                 |
+| [docs/plugins/rubin.md](docs/plugins/rubin.md)                                                           | The Rubin follow-up plugin                                                                                               | [Phase 8](#phase-8-reach)                                                                                                 |
+| [docs/plugins/variable_stars.md](docs/plugins/variable_stars.md)                                         | The variable-star plugin: one magnitude per visit, and what a listed window is                                           | [Phase 2](#phase-2-first-clean-night) and [Phase 3](#phase-3-first-accepted-file)                                         |
+| [docs/plugins/variable-star-feasibility.md](docs/plugins/variable-star-feasibility.md)                   | Why variable-star photometry is the stronger case than transits: evidence, the site census, and the risks still open     | [North star](docs/mission.md#north-star-take-part-in-collaborative-pro-am-science), [Phase 2](#phase-2-first-clean-night) |
+
+
