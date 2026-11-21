@@ -107,11 +107,11 @@ The goal is to package results for submission to the citizen-science networks. A
 
 #### Phase 1.7: Go public
 
-- [ ] Make the repository public.
-- [ ] **Check the recreated repository first.** On 2026-11-21 the repository was recreated with one clean commit (the old one is kept privately). Turn private vulnerability reporting on again (it was on, 2026-11-14), confirm the `tests` workflow runs and passes on the new repository (it has: the `main` run 44915046441 and the matrix run 44920545150 both passed, 2026-11-21), and recreate any old issue that is still wanted (three were recreated; the rest stay in the old repository).
-- [ ] **Branch protection on `main`:** block force-push and deletion, and require the checks `tests (Python 3.10)` and `frontend`. These are the names a pull request shows, because only the daily and manual runs add 3.11 to 3.13; do not require those, as they never run on a pull request. GitHub offers a check in its list only after it has run in the repository, so open a pull request first. Tried 2026-11-14: GitHub returned 403, "Upgrade to GitHub Pro or make this repository public". It waits on the plan or on going public.
+- [x] **Make the repository public.** Done 2026-11-21.
+- [x] **Check the recreated repository first.** Done 2026-11-21. The repository was recreated with one clean commit (the old one is kept privately). Private vulnerability reporting is on again (it can only be on for a public repository, so it came after the switch), the `tests` workflow passes on the new repository (`main` run 44915046441, the matrix run 44920545150, and pull request #5, which ran exactly `frontend` and `tests (Python 3.10)`), and the three old issues still wanted are recreated (#1 to #3; the rest stay in the old repository).
+- [ ] **Branch protection on `main`: set except for the tests.** Done 2026-11-21 as a ruleset named "Protect Main", active, with no bypass: deletion and force-push are blocked and a pull request with one approving review is required. Still open: its required-status-checks rule is on but lists no checks, so `main` does not yet require the tests (pull request #5 merged while `tests (Python 3.10)` was still running). Add `frontend` and `tests (Python 3.10)` to that rule. Do not add 3.11 to 3.13, as they only run on the daily and manual runs and would hold every pull request forever. Also check that the one-approving-review rule suits a single owner: GitHub does not let an author approve their own pull request, and the ruleset has no bypass actor.
 
-*Done when:* the repository is public and protection is set.
+*Done when:* the repository is public and protection is set, including the tests. Public is done; the tests are not yet required.
 
 **Exit criteria (all required):**
 
