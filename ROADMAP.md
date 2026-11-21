@@ -10,8 +10,6 @@ The plan: what each phase delivers, how it is built, and when it is done. **A ph
 
 **Where we are.** Two short (12-frame) variable-star visits finished on a real Seestar S50 Pro on 2026-11-18 (Hat-P-23). The reanalysed magnitudes, 12.145 ± 0.057 and 12.139 ± 0.042, are inside the quoted error of Gaia G 12.162. Pointing correction, autofocus and a local plate solve have worked on the sky. On 2026-11-20 the telescope joined the home network in station mode, after the router was moved off `10.0.0.x`, and one computer reached the telescope, Open-Meteo and the Harvard VizieR mirror together. The hardware check passed. Not yet seen: a whole mission over station mode, a live AAVSO file, a transit that covers a mid-time.
 
-**Phase 1 is done (2026-11-21).** The repository is public, `main` is protected and requires the tests, private vulnerability reporting is on, and every mission writes a findings summary beside its upload files and mission log ([Phase 1](#phase-1-public-release)).
-
 **Next, in this order.**
 
 1. [Phase 2, first clean night](#phase-2-first-clean-night): keep the telescope awake while connected (2.1), build the recipe for repeating a night (2.2), then a 40-frame variable-star visit on the home network with nothing assumed (2.3).
@@ -25,7 +23,7 @@ Transits are [Phase 6](#phase-6-transits). Nothing before it needs one.
 
 ## Phases
 
-Eight phases. The order is the path: **a public repository, then a clean night, then a file a network accepts, then claims you can defend, then unattended and automatic running, and only then transits.** Phase 1 did not need the telescope and is done. Phases 2 and 3 are in sequence. Phases 7 and 8 are later and not yet scheduled.
+Eight phases. The order is the path: **a public repository, then a clean night, then a file a network accepts, then claims you can defend, then unattended and automatic running, and only then transits.** Phase 1 is done and is kept under [Completed phases](#completed-phases). Phases 2 and 3 are in sequence. Phases 7 and 8 are later and not yet scheduled.
 
 **How the phases cover the goal's loop** (propose, observe, analyze, test, then submit or rework; the [mission](docs/mission.md) page and the README start from it):
 
@@ -40,31 +38,9 @@ Eight phases. The order is the path: **a public repository, then a clean night, 
 | Rework                  | [7.2](#phase-7-autonomy) follow up, redesign or drop, within hard limits                                                                             |
 
 
-**How to read a phase.** A top-level phase (Phase 3) has a goal, what is already done, its sub-phases (Phase 3.1, 3.2 and so on) and **exit criteria**: the phase is finished when all of its exit criteria are true, and not before. A sub-phase is one piece of work: a checklist of tasks and a *done when*. Tick a task when it is done, and a phase when its exit criteria are. Where a task from the old phase lists went is in the [field journal](docs/journal.md#the-old-phase-lists-phases-1-to-6-as-of-2026-11-20).
+**How to read a phase.** A top-level phase (Phase 3) has a goal, what is already done, its sub-phases (Phase 3.1, 3.2 and so on) and **exit criteria**: the phase is finished when all of its exit criteria are true, and not before. A sub-phase is one piece of work: a checklist of tasks and a *done when*. Tick a task when it is done, and a phase when its exit criteria are. A finished phase moves to [Completed phases](#completed-phases) at the end, cut down to a short summary and its exit criteria, and its detail goes to the journal. Where a task from the old phase lists went is in the [field journal](docs/journal.md#the-old-phase-lists-phases-1-to-6-as-of-2026-11-20).
 
-### Phase 1: Public release
-
-**Goal:** the repository can be made public without surprises. A stranger can install it, read an honest README, and know what is unproven. This phase does not wait for a clean night: the README says what has and has not been seen.
-
-**Done:** Apache-2.0 `LICENSE` and `NOTICE`; the hardware use-at-your-own-risk disclaimer; the not-affiliated statement; `CONTRIBUTING.md`, `SECURITY.md` and the issue forms; the `.agents/` decision (ignored); this roadmap inside the repository; `pyproject.toml` with an `astronomo` command and `install.py`; settings validated at startup; CI (first green run 2026-11-14, in the repository this one was recreated from): pushes run the short suite, and the full suite runs when Python, the requirements, the test config or the workflow changes, and daily at 06:00 Mountain Standard Time.
-
-**Closed 2026-11-21.** What each part delivered, in short. The detail, the dates and the numbers are in the [journal](docs/journal.md#phase-1-public-release-as-completed-2026-11-21).
-
-- **1.1 Third-party data.** The one data set without a stated licence was removed, and nothing in the repository downloads or credits it.
-- **1.2 Show what it does.** The README has a dashboard screenshot, a small architecture diagram and a status block that was audited against what has been seen on a real telescope.
-- **1.3 Python versions.** A NumPy 2.5 bug that broke the pointing check on 3.12 and 3.13 was fixed. The daily and manual CI runs cover 3.10 to 3.13 with clean installs, a pull request runs 3.10, and the README names the versions and the libraries each one got.
-- **1.4 and 1.5 Documentation.** The history moved out of the roadmap, the runbook and the README. Every topic has one home, the README is about 150 lines, the quick start is a variable-star visit, and the plugins that are not ready are marked as drafts.
-- **1.6 Package the result.** The write-up step and LaTeX are gone. A mission writes its upload files, a findings summary and a mission log into one `results/` folder, and the dashboard shows the findings.
-- **1.7 Go public.** The repository is public, private vulnerability reporting is on, and a ruleset protects `main` and requires `frontend` and `tests (Python 3.10)`.
-
-*Standing rule, not a task:* the README's status block and limitations say what has been seen on a real telescope and what has not. Keep its phase list in step with this file. It has no checkboxes or dates on purpose, so it should rarely change. Re-read it against this file whenever a phase closes.
-
-**Exit criteria (all required):**
-
-- [x] Phases 1.1 to 1.6 are done, or waived by the owner in this file. Done 2026-11-21: every box in 1.1 to 1.6 is ticked and each *done when* is met.
-- [x] A mission produces a findings package (upload files, findings summary, mission log) with no LaTeX needed (1.6). LaTeX is gone; the findings summary is open. Done 2026-11-21: `python main.py --simulate` into a scratch folder wrote the upload files, `findings_<night>.md` and `mission_log_<night>.md` into one `results/` folder, and the dashboard's API returned the findings with their table, caveats and checks.
-- [x] The repository is public (1.7), and the main branch requires the tests to pass. Done 2026-11-21: the repository is public and the "Protect Main" ruleset requires `frontend` and `tests (Python 3.10)`.
-- [x] A person who has only read the README can say what has been run on a real telescope and what has not. Done 2026-11-21: the README was read again after the 1.5 cut and the 1.6 change. Its status block says two short visits have finished and names what has not been seen (a clean 40-frame night, a whole mission over station mode, a live AAVSO file, a transit), and the plugin table marks the two drafts and `transit_finder` as simulation only.
+**Standing rule, not a task.** The README's status block and limitations say what has been seen on a real telescope and what has not. Keep its phase list in step with this file. It has no checkboxes or dates on purpose, so it should rarely change. Re-read it against this file whenever a phase closes.
 
 ### Phase 2: First clean night
 
@@ -375,6 +351,23 @@ The preparation is done. Depends on claim levels and confirmation observations.
 - [ ] A file has been sent through a network's real channel after a person's recorded sign-off (8.2).
 - [ ] A plugin written by someone other than the author runs and is listed in the plugin directory (8.1).
 - [ ] Each remaining item above is either built to its own "done when", or dropped here with a reason.
+
+## Completed phases
+
+Finished phases, kept short. The detail and the dates are in the [journal](docs/journal.md); the exit criteria stay here as the record that each phase closed.
+
+### Phase 1: Public release
+
+**Goal (met):** the repository can be made public without surprises. A stranger can install it, read an honest README, and know what is unproven.
+
+**Closed 2026-11-21.** The one data set without a stated licence was removed. The README has a dashboard screenshot, a small architecture diagram and a status block audited against what has been seen on a real telescope. A NumPy 2.5 bug was fixed, CI covers Python 3.10 to 3.13 daily, and the README names the versions. The documentation has one home per topic, the plugins that are not ready are marked as drafts, and a mission writes its upload files, a findings summary and a mission log into one `results/` folder. The repository is public, private vulnerability reporting is on, and a ruleset protects `main` and requires `frontend` and `tests (Python 3.10)`. Every part, with its numbers: [journal](docs/journal.md#phase-1-public-release-as-completed-2026-11-21).
+
+**Exit criteria (all required):**
+
+- [x] Phases 1.1 to 1.6 are done, or waived by the owner in this file. Done 2026-11-21: every box in 1.1 to 1.6 is ticked and each *done when* is met.
+- [x] A mission produces a findings package (upload files, findings summary, mission log) with no LaTeX needed (1.6). LaTeX is gone; the findings summary is open. Done 2026-11-21: `python main.py --simulate` into a scratch folder wrote the upload files, `findings_<night>.md` and `mission_log_<night>.md` into one `results/` folder, and the dashboard's API returned the findings with their table, caveats and checks.
+- [x] The repository is public (1.7), and the main branch requires the tests to pass. Done 2026-11-21: the repository is public and the "Protect Main" ruleset requires `frontend` and `tests (Python 3.10)`.
+- [x] A person who has only read the README can say what has been run on a real telescope and what has not. Done 2026-11-21: the README was read again after the 1.5 cut and the 1.6 change. Its status block says two short visits have finished and names what has not been seen (a clean 40-frame night, a whole mission over station mode, a live AAVSO file, a transit), and the plugin table marks the two drafts and `transit_finder` as simulation only.
 
 ## Backlog
 

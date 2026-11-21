@@ -115,7 +115,7 @@ Real-data check: the asteroid pipeline recovered a mover in ZTF images of astero
 
 Phases in order (each has numbered sub-phases and exit criteria in [ROADMAP.md](ROADMAP.md)):
 
-1. **Public release:** a license, an honest README with a screenshot and diagram, the Python versions that work named, tidy docs, a findings package for each night, and then the repository made public with branch protection on.
+1. **Public release (done):** a license, an honest README with a screenshot and diagram, the Python versions that work named, tidy docs, a findings package for each night, and then the repository made public with branch protection on.
 2. **First clean night:** the scope kept awake while connected, a recipe for repeating a night, then one supervised 40-frame variable-star visit on a real Seestar with nothing assumed: a live forecast, a reachable Gaia mirror and an AAVSO file written on the run.
 3. **First accepted file:** retry buttons so a failed outside call never strands a night, and a file the AAVSO accepts.
 4. **Claims you can defend:** a quoted systematic error on every result, and claims stated no more strongly than the evidence allows.
