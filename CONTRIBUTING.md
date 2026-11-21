@@ -33,8 +33,8 @@ python3 install.py --non-interactive --no-self-test   # venv, install, and a .en
 source .venv/bin/activate
 
 python main.py --simulate --fast       # a full mission in about 10 s
-pytest -n auto                         # the whole suite on every core, about 2 to 3 minutes
-pytest -n auto -m "not slow"           # a quick check while working, about 2 minutes
+pytest -n auto                         # the whole suite on every core, about 4 to 5 minutes
+pytest -n auto -m "not slow"           # skips the tests that run a whole simulated mission; about 4 to 5 minutes too on a laptop
 cd frontend && npm test                # React render smoke (Node 18+; not part of pytest)
 ```
 

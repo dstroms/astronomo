@@ -6,7 +6,7 @@
 Astronomo is a free, open-source, auditable pipeline that runs a small telescope (Seestar S50 Pro) under supervision, end to end: **fetch a network's targets → check weather → observe → reduce → cross-reference → prepare upload files → screen for anomalies → keep a mission log**. The core is **domain-agnostic** (mission state, weather gating, hardware, telemetry, upload files); a science case is a *plugin* ([Plugins](#plugins)). A language model is optional, off by default, and never in charge of safety.
 
 **Take part in the networks, not rediscover what is known.** A 50 mm telescope supplies what the networks are short of, so
-Astronomo takes targets from their own lists: [ExoClock](https://www.exoclock.space/) and [NASA Exoplanet Watch](https://exoplanets.nasa.gov/exoplanet-watch/) (transit times that keep an ephemeris fresh), the NASA Exoplanet Archive's timing-variation flag, the AAVSO Target Tool (variable-star magnitudes), the [Minor Planet Center](https://minorplanetcenter.net/)'s NEO Confirmation Page (astrometry for newly reported asteroids), and public Rubin alerts (transient photometry). The **default product is a database-ready upload file** (AAVSO or ADES) that a person reviews and sends; **Astronomo never sends anything itself**. Every night gets a Markdown mission log, and an anomaly (a significant timing offset, an unexpected dip, an outburst) is flagged in it for a person to review.
+Astronomo takes targets from their own lists: [ExoClock](https://www.exoclock.space/) and [NASA Exoplanet Watch](https://exoplanets.nasa.gov/exoplanet-watch/) (transit times that keep an ephemeris fresh), the NASA Exoplanet Archive's timing-variation flag, the AAVSO Target Tool (variable-star magnitudes), the [Minor Planet Center](https://minorplanetcenter.net/)'s NEO Confirmation Page (astrometry for newly reported asteroids), and public Rubin alerts (transient photometry). Of these, only the variable-star and transit plugins are meant for use; the asteroid and Rubin plugins are drafts ([Plugins](#plugins)). The **default product is a database-ready upload file** (AAVSO or ADES) that a person reviews and sends; **Astronomo never sends anything itself**. Every night gets a Markdown mission log, and an anomaly (a significant timing offset, an unexpected dip, an outburst) is flagged in it for a person to review.
 
 ## The Goal
 
@@ -20,6 +20,10 @@ The modest aim for one telescope is narrower: take part in the networks that are
 > operator is responsible for the equipment. Pointing a telescope at or near the Sun can destroy its optics and sensor
 > and cause eye injury; the built-in interlocks reduce that risk but do not remove it. Supervise the first runs, and read
 > [Real hardware](docs/real-hardware.md) first.
+
+![The dashboard page for a finished simulated mission: the result and what it means, the upload file to review, and the light curve.](docs/images/dashboard-mission.png)
+
+*The dashboard's page for a finished mission, here a simulated one: the result, what it means, the file a person reviews (never sent by Astronomo) and the light curve. The star and the eclipse are practice data, not a real star. [More on the dashboard](#4-watch-it-in-the-dashboard-optional).*
 
 ## Quick start
 
@@ -97,8 +101,8 @@ python main.py --schedule --once                           # list what is due; s
 python main.py --fetch-forecast                            # save the forecast before joining the telescope Wi-Fi
 
 # Test
-pytest -n auto                                             # whole suite on every core, about 2 to 3 minutes; a few tests skip without a real Ollama
-pytest -n auto -m "not slow"                               # quick check while working, about 2 minutes (skips the tests that run a whole simulated mission)
+pytest -n auto                                             # whole suite on every core, about 4 to 5 minutes; a few tests skip without a real Ollama
+pytest -n auto -m "not slow"                               # skips the tests that run a whole simulated mission; about 4 to 5 minutes too on a laptop (2026-11-21)
 cd frontend && npm test                                    # React render smoke (Node 18+; not part of pytest, so a Python-only install stays Node-free)
 ```
 
@@ -125,7 +129,7 @@ your account (same page as above).
 
 ## Connect a real Seestar
 
-The steps above need no telescope. This is how a Seestar S50 Pro (firmware 9.75) was connected. There are two ways to put the computer and the telescope on one network. **Use station mode (A) at home.** It keeps the internet, which the weather check and the Gaia comparison stars need during a mission.
+The steps above need no telescope. This is how a Seestar S50 Pro (firmware 9.75) was connected. There are two ways to put the computer and the telescope on one network. **Use station mode (A) at home.** It keeps the internet, which the weather check and the Gaia comparison stars need during a mission. It has been tested at the bench only, not yet on the sky.
 
 1. In the Seestar app, update the firmware. This unit was updated to **9.75**. Leave any later update until the check below has run.
 2. **A. Station mode (the telescope joins your home Wi-Fi; tested 2026-11-20).**
@@ -261,7 +265,7 @@ A science case is a plugin. Four ship with Astronomo, and `variable_stars` is th
 | Plugin | Status | Targets come from                                                                                                                                                                                              | Produces (default output)                                                                 | Anomaly flagged in the mission log                                                                  | Details                                                          |
 | --- | --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | `variable_stars` | ready (default) | The AAVSO Target Tool's public list (stars that want data, by filter and cadence). A saved window is a usable night, not an eclipse                                                                            | One **AAVSO Extended** magnitude per visit (green channel `TG`, Gaia comparison ensemble) | An eclipse off its predicted time, an outburst, or a Mira far from a predicted maximum         | [docs/plugins/variable_stars.md](docs/plugins/variable_stars.md) |
-| `transit_finder` | ready | ExoClock + NASA Exoplanet Watch, ranked by how stale each planet's published ephemeris is, boosted by ExoClock priority and the NASA Exoplanet Archive's TTV flag. Tasks: ephemeris refinement, TTV monitoring | One **AAVSO Exoplanet Report** per transit time series (BJD_TDB, relative flux)           | Mid-transit time far from the ephemeris (TTV), a missing transit, a dip where none is expected | [docs/plugins/transit.md](docs/plugins/transit.md)               |
+| `transit_finder` | ready (simulation only) | ExoClock + NASA Exoplanet Watch, ranked by how stale each planet's published ephemeris is, boosted by ExoClock priority and the NASA Exoplanet Archive's TTV flag. Tasks: ephemeris refinement, TTV monitoring | One **AAVSO Exoplanet Report** per transit time series (BJD_TDB, relative flux)           | Mid-transit time far from the ephemeris (TTV), a missing transit, a dip where none is expected | [docs/plugins/transit.md](docs/plugins/transit.md)               |
 | `asteroid_finder` | **draft** | MPC NEO Confirmation Page when anything is within reach (rarely: it is nearly all fainter than a 50 mm telescope can see), else a labelled built-in list of bright known asteroids                             | **MPC ADES** astrometry, only for tracks matched to a designation or a NEOCP object       | None proposed yet                                                                              | [docs/plugins/asteroid.md](docs/plugins/asteroid.md)             |
 | `rubin_followup` | **draft** | Public Vera C. Rubin alerts via the Fink broker, plus an optional watchlist                                                                                                                                    | One **AAVSO Extended** photometry line per alert (a magnitude or a fainter-than limit)    | An **outburst**: detected much brighter than Rubin's own light curve predicts                  | [docs/plugins/rubin.md](docs/plugins/rubin.md)                   |
 
@@ -279,16 +283,16 @@ clients have run live is under [Known limitations](#known-limitations--v1-gaps).
 
 - **In simulation:** a whole mission runs with no hardware or network (`python main.py --simulate`), and the test suite passes (2 tests skip because they need a real Ollama).
 - **On a real telescope:** a Seestar S50 Pro (firmware 9.75) over Alpaca finished two short supervised variable-star visits (Hat-P-23, 2026-11-18, 12 frames each). The reanalysed magnitudes agree with Gaia G within their quoted errors. The telescope has also been reached over a home network with the internet at the same time (a bench check, 2026-11-20; see [Connect a real Seestar](#connect-a-real-seestar)).
-- **Not yet seen:** a clean 40-frame night, a live AAVSO file, a transit.
+- **Not yet seen:** a clean 40-frame night, a whole mission over station mode, a live AAVSO file, a transit.
 
 [Status](docs/status.md) says, stage by stage, what has and has not been seen on a real telescope, and the roadmap's [Now](ROADMAP.md#now) section says what is next. The model's role is deliberately small and grows one bounded, validated decision at a time; safety interlocks always stay in code.
 
 Phases in order (each has numbered sub-phases and exit criteria in [ROADMAP.md](ROADMAP.md)):
 
-1. **Public release:** a license, an honest README, a screenshot and diagram, tidy docs, a findings package for each night, and the open questions about third-party data settled.
+1. **Public release:** a license, an honest README with a screenshot and diagram, the Python versions that work named, tidy docs, a findings package for each night, and then the repository made public with branch protection on.
 2. **First clean night:** the scope kept awake while connected, a recipe for repeating a night, then one supervised 40-frame variable-star visit on a real Seestar with nothing assumed: a live forecast, a reachable Gaia mirror and an AAVSO file written on the run.
 3. **First accepted file:** retry buttons so a failed outside call never strands a night, and a file the AAVSO accepts.
-4. **Steady and unattended:** a scheduler proven on the mount, multi-night missions, and science claims stated no more strongly than the evidence allows.
+4. **Steady and unattended:** a scheduler proven on the mount, multi-night missions, campaigns that combine many nights of one target into one package, a planner that proposes the nights for a person to approve, a quoted systematic error on every result, science claims stated no more strongly than the evidence allows, and safety checks for running without someone watching.
 5. **Transits:** a known transit with its mid-time inside its error, and a measured timing error.
 6. **Autonomy:** the model proposes missions and evaluates data inside the deterministic graph, findings are tested by follow-up, and models are compared.
 7. **Reach:** a plugin directory, sending files through each network's real channel behind human approval, more science cases and multi-telescope coordination.
@@ -325,7 +329,7 @@ Beyond the real-hardware gap and the open ends of the loop (both above), the mai
 is "What is not real yet" in [status](docs/status.md#what-is-not-real-yet).
 
 - **Field rotation is measured and corrected, and the limits are still guesses.** Registration applies a rotation about the frame centre plus a shift. On the Hat-P-23 visits it was 1.64° and 0.84°, and both were corrected. The warn and fail limits (`warn_rotation_edge_px` 1.5, `max_rotation_edge_px` 4) have not been re-set from a clean night.
-- **The observing site must be set.** It defaults to a Denver placeholder; set yours in the dashboard or with `ASTRONOMO_SITE_`*.
+- **The observing site must be set.** It defaults to a Denver placeholder; set yours in the dashboard or with the `ASTRONOMO_SITE_*` settings.
 A real-telescope run refuses to start until you do. The horizon is a few points you type, not a measurement.
 - **The scheduler does not start a night by itself.** `python main.py --schedule --once` lists due plans and resumes a
 mission that was waiting on weather. A plan starts with `--confirm ID`, or with `python main.py --from-plan ID`.
@@ -357,7 +361,7 @@ Tested with Python 3.10, langgraph 1.2, photutils 2.0, astropy 6.1, fastapi 0.11
 
 ## Contributing
 
-The most useful contribution right now is an honest report of a night on a real Seestar, above all a clean 40-frame variable-star visit run over station mode ([how to connect](#connect-a-real-seestar)); second is a plugin for another science case. `[CONTRIBUTING.md](CONTRIBUTING.md)` has the ground rules (nothing is sent
+The most useful contribution right now is an honest report of a night on a real Seestar, above all a clean 40-frame variable-star visit run over station mode ([how to connect](#connect-a-real-seestar)); second is a plugin for another science case. [CONTRIBUTING.md](CONTRIBUTING.md) has the ground rules (nothing is sent
 by the software, quoted errors must be true, unconfirmed hardware behaviour is labelled as such), how to set up and run
 the tests, and how to report a night or a problem. Safety and security reports go through [SECURITY.md](SECURITY.md).
 
