@@ -28,7 +28,7 @@ Install and run a simulation with the [quick start](../README.md#quick-start) fi
   to it loses its other network, so weather and Gaia fail during a mission. In station mode the telescope joins your home
   Wi-Fi and the computer stays on that same network. Set it up in the Seestar app (Wi-Fi settings, Station Mode), switch the
   Alpaca server on again afterwards, and set `ASTRONOMO_SEESTAR_HOST` to the telescope's address; the README's
-  [Connect a real Seestar](../README.md#connect-a-real-seestar) has the steps. **Check the router first: a `10.0.0.x`
+  [Connect a real Seestar](connect-a-seestar.md) has the steps. **Check the router first: a `10.0.0.x`
   range (the Xfinity default) makes station mode fail with "network connect failed".** ZWO blocks that range because
   the telescope's own Wi-Fi uses it. Moving the router to `192.168.1.x` fixed it here (2026-11-20). After that the
   scope answered at `192.168.1.200:32323`, Open-Meteo and the Harvard VizieR mirror answered from the same computer,

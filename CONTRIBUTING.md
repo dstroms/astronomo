@@ -8,7 +8,7 @@ night easier. Thank you for helping.
 The magnitudes match Gaia G. The live AAVSO file was held because the telescope Wi-Fi has no internet. A clean
 40-frame night and a known transit have not been run. The most valuable thing anyone can do right now is a setup
 where the computer reaches the internet and the telescope at the same time, and an honest report of a night
-(see [Run it on a real telescope](#run-it-on-a-real-telescope) and [Connect a real Seestar](README.md#connect-a-real-seestar)).
+(see [Run it on a real telescope](#run-it-on-a-real-telescope) and [Connect a real Seestar](docs/connect-a-seestar.md)).
 
 ## The ground rules
 

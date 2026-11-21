@@ -65,3 +65,39 @@ What Astronomo is today: a **deterministic simulation-proven pipeline** (fetch n
 - **Weather waits, and then the process is handed back.** If weather blocks a target past `max_sleep_cycles`, the mission keeps a wake time and exits, instead of aborting. The scheduler resumes it. A saved forecast's next clear hour is the wake time when the file has one. Site limits that never clear (a target that never rises) still end the mission.
 - **Rubin follow-up has not been run live.** The alert stream was dark when this was written (expected back around mid/late October 2026; not re-checked), and a 50 mm telescope reaches roughly mag 15-16 while most alerts are fainter.
 - **The LLM surface is too thin to benchmark.** Two prose tasks do not discriminate between models.
+
+## Known limitations (v1 gaps)
+
+Moved here from the README on 2026-11-21 with the text unchanged, apart from the links. The README keeps a short summary. Some items overlap with [What is not real yet](#what-is-not-real-yet); merging the two lists is part of the documentation consolidation in the roadmap.
+
+Beyond the real-hardware gap and the open ends of the loop (covered in the sections above), the main ones are below.
+The complete list is [What is not real yet](#what-is-not-real-yet).
+
+- **Field rotation is measured and corrected, and the limits are still guesses.** Registration applies a rotation about the frame centre plus a shift. On the Hat-P-23 visits it was 1.64° and 0.84°, and both were corrected. The warn and fail limits (`warn_rotation_edge_px` 1.5, `max_rotation_edge_px` 4) have not been re-set from a clean night.
+- **The observing site must be set.** It defaults to a Denver placeholder; set yours in the dashboard or with the `ASTRONOMO_SITE_*` settings.
+A real-telescope run refuses to start until you do. The horizon is a few points you type, not a measurement.
+- **The scheduler does not start a night by itself.** `python main.py --schedule --once` lists due plans and resumes a
+mission that was waiting on weather. A plan starts with `--confirm ID`, or with `python main.py --from-plan ID`.
+Self-start stays off until the interlocks and parking have been confirmed on this mount. Archive replays still hold a
+process while they wait. Observing windows, altitude, Sun and Moon separation are enforced on telescope
+missions, but those interlocks have been tested only in simulation. `python main.py --stop` parks and does not resume.
+- **Real-data results are demonstrations, not measurements.** Photometry is instrumental (SNR assumes ~1 e⁻/ADU) and on
+the Gaia G scale, not a V-band standard (coded `CV`, `TRANS=NO`); there is no quoted systematic error, and SkyBoT/MPC
+are not consulted (see the [plugin pages](plugins/)).
+- **The mission log is deterministic.** It is Markdown, built from the mission record with no model-written text, and is
+written every time. A model, if you attach one, writes only the observing rationale shown on the dashboard.
+- **Upload files are checked against published format specifications, not by uploading them.** The AAVSO Exoplanet
+report uses `Rnflux` per the current format but was not accepted by their upload page. The draft now attaches a
+field image of the first frame with the target and comparison stars marked. That image is the stars the light
+curve used, not a new plate solution, and a real Seestar frame has not been checked against the upload page.
+Run each file through the destination's validator, and read it, before sending.
+- **The four target lists have been fetched live** (ExoClock on 2026-11-14, the others on 2026-10-28;
+[details](real-data.md)). If neither ExoClock nor Exoplanet Watch can be read (and no cache exists) the transit
+plugin falls back to a built-in list, as does the asteroid plugin when the NEOCP offers nothing; the mission log
+labels such targets `manual`.
+- **The 50 mm aperture limits what the networks can use.** ExoClock asks for 5-inch-class telescopes and will not list a
+Seestar as a contributor, so Astronomo applies its own brightness and depth limits. Almost every NEOCP object is far
+too faint. Variable-star photometry has measured a Gaia G magnitude on this telescope (Hat-P-23, 2026-11-18). The live
+AAVSO file was held because that visit ran on the telescope's own Wi-Fi, which has no internet (station mode on a home network avoids this; not yet used on the sky). A listed window is a usable night, not an eclipse.
+- **Parallel missions:** several can share a data directory, one process each, but two *telescope* missions would
+compete for the one telescope, so only archive missions are meant to run in parallel.

@@ -8,7 +8,7 @@ What Astronomo is for, what it holds itself to, and how we will know it is worki
 
 Astronomo is the free, open, auditable pipeline that makes this contribution ordinary for a Seestar owner. It takes targets from the networks' own lists, observes them under supervision, reduces them honestly, and writes a file the network accepts. A person decides what is sent.
 
-On this telescope the stronger case is variable-star photometry, so it comes first. Transit timing is kept, and has its own later phase ([Phase 5](../ROADMAP.md#phase-5-transits)), because its error bar is harder to make true.
+On this telescope the stronger case is variable-star photometry, so it comes first. Transit timing is kept, and has its own later phase ([Phase 6](../ROADMAP.md#phase-6-transits)), because its error bar is harder to make true.
 
 **What we hold ourselves to**
 
@@ -25,8 +25,8 @@ On this telescope the stronger case is variable-star photometry, so it comes fir
 | --- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | 1   | **Visit.** A variable-star magnitude within its quoted error ([Phase 2](../ROADMAP.md#phase-2-first-clean-night)) | **R1.** Someone other than the author has run it on a real night, and a file from it was accepted by a network |
 | 2   | **B.** One accepted upload file ([Phase 3](../ROADMAP.md#phase-3-first-accepted-file))              | **R2.** About 10 owners have had a file accepted                                                               |
-| 3   | **C.** Steady variable-star visits ([Phase 4](../ROADMAP.md#phase-4-steady-and-unattended))         | **R3.** Hundreds of accepted files a year from outside observers                                               |
-| 4   | **A.** One known transit within its error ([Phase 5](../ROADMAP.md#phase-5-transits)), then **D.** One further case ([Phase 7](../ROADMAP.md#phase-7-reach)) | **R4.** The networks mention the pipeline's data as a regular source (their call, not ours)                    |
+| 3   | **C.** Steady variable-star visits ([Phase 5](../ROADMAP.md#phase-5-unattended-and-automatic), after the honest errors of [Phase 4](../ROADMAP.md#phase-4-claims-you-can-defend)) | **R3.** Hundreds of accepted files a year from outside observers                                               |
+| 4   | **A.** One known transit within its error ([Phase 6](../ROADMAP.md#phase-6-transits)), then **D.** One further case ([Phase 8](../ROADMAP.md#phase-8-reach)) | **R4.** The networks mention the pipeline's data as a regular source (their call, not ours)                    |
 
 The adoption numbers are an illustration of scale, not a forecast. Adoption depends on first showing, on one real telescope, that the data are good.
 
@@ -50,11 +50,11 @@ Three parts, in this order of importance.
 **1. Trustworthy data.** An observation is only worth a network's time if its quoted error is true.
 
 - *Magnitudes:* a variable-star magnitude agrees with a published brightness within its quoted error. A bar that is really three times larger is worse than no data.
-- *Timings (Phase 5):* over all transit timings, the pull `(measured - published ephemeris) / quoted sigma` has a median magnitude of about 1 or less and an RMS of about 1.
+- *Timings (Phase 6):* over all transit timings, the pull `(measured - published ephemeris) / quoted sigma` has a median magnitude of about 1 or less and an RMS of about 1.
 - *Accepted files:* at least 90 % of upload files pass the destination's own validator on the first try (the formats are only spec-checked today).
 - *No false alarms:* every anomaly the mission log flags was reviewed by a person and judged real enough to report.
 
-**2. Useful targets.** Observe what the network asked for, not what is convenient. For variable stars, that is stars on the AAVSO Target Tool this site can reach. For transits (Phase 5), at least 75 % of attempted observations are on planets in the top quarter of the staleness ranking, built into short O-C series on a handful of planets rather than scattered points.
+**2. Useful targets.** Observe what the network asked for, not what is convenient. For variable stars, that is stars on the AAVSO Target Tool this site can reach. For transits (Phase 6), at least 75 % of attempted observations are on planets in the top quarter of the staleness ranking, built into short O-C series on a handful of planets rather than scattered points.
 
 **3. A small, steady yield.** These are order-of-magnitude estimates, not measurements, to be replaced after the first real nights. A variable-star yield is not estimated: a visit is short, and the count waits on how many clean nights this site gets.
 
@@ -62,9 +62,9 @@ Three parts, in this order of importance.
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
 | **Visit**                 | One variable-star magnitude on a real S50 that agrees with a published brightness within its quoted error, and the file path works                                      | [2](../ROADMAP.md#phase-2-first-clean-night)        |
 | **B. First contribution** | One real upload file accepted by a network's database, reviewed and sent by a person                                                                                    | [3](../ROADMAP.md#phase-3-first-accepted-file)      |
-| **C. Steady**             | Variable-star visits as the regular product                                                                                                                             | [4](../ROADMAP.md#phase-4-steady-and-unattended)    |
-| **A. Validated transit**  | One known transit whose mid-time agrees with the published ephemeris within its combined error and within about 3 minutes, and the whole path (target, file, validator) works | [5](../ROADMAP.md#phase-5-transits)                 |
-| **D. Further case**       | Supernova or nova follow-up, which reuses the variable-star photometry, reaching level B. Other cases: [science options](first-light/07-science-options.md)         | [7](../ROADMAP.md#phase-7-reach)                    |
+| **C. Steady**             | Variable-star visits as the regular product                                                                                                                             | [5](../ROADMAP.md#phase-5-unattended-and-automatic) |
+| **A. Validated transit**  | One known transit whose mid-time agrees with the published ephemeris within its combined error and within about 3 minutes, and the whole path (target, file, validator) works | [6](../ROADMAP.md#phase-6-transits)                 |
+| **D. Further case**       | Supernova or nova follow-up, which reuses the variable-star photometry, reaching level B. Other cases: [science options](first-light/07-science-options.md)         | [8](../ROADMAP.md#phase-8-reach)                    |
 
 The honest reading of the transit half: **tens of good timings a year** (about 20 accepted timings in the first 12 months after level A, a stretch of about 40), comparable with a dedicated amateur using a small telescope. A single timing from an S50 is unlikely to detect a transit-timing variation on its own.
 

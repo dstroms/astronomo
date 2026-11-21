@@ -1,6 +1,6 @@
 # 08. The first transit mission
 
-Written 2026-11-20, moved out of [the first-mission note](06-first-mission.md). A transit is not part of the first clean night: it is [Phase 5](../../ROADMAP.md#phase-5-transits). Nothing in Phases 1 to 4 needs one. This page keeps what a transit night needs, so it is ready when the time comes.
+Written 2026-11-20, moved out of [the first-mission note](06-first-mission.md). A transit is not part of the first clean night: it is [Phase 6](../../ROADMAP.md#phase-6-transits). Nothing in Phases 1 to 5 needs one. This page keeps what a transit night needs, so it is ready when the time comes.
 
 ## Before spending a night on it
 

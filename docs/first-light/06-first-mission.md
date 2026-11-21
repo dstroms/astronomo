@@ -1,6 +1,6 @@
 # 06. The first clean night
 
-Written 2026-11-15, restructured 2026-11-20. This is the runbook for the first variable-star night that finishes with nothing assumed ([Phase 2](../../ROADMAP.md#phase-2-first-clean-night)). How to connect, and what can hurt the telescope, is in [Real hardware](../real-hardware.md) and the README's [Connect a real Seestar](../../README.md#connect-a-real-seestar). What the telescope says goes into the [open hardware questions](05-first-light-checklist.md). What happened on earlier nights, and why none of them counts as the clean night, is in the [field journal](../journal.md#the-nights). A transit is a later phase: [08-first-transit.md](08-first-transit.md).
+Written 2026-11-15, restructured 2026-11-20. This is the runbook for the first variable-star night that finishes with nothing assumed ([Phase 2](../../ROADMAP.md#phase-2-first-clean-night)). How to connect, and what can hurt the telescope, is in [Real hardware](../real-hardware.md) and [Connect a real Seestar](../connect-a-seestar.md). What the telescope says goes into the [open hardware questions](05-first-light-checklist.md). What happened on earlier nights, and why none of them counts as the clean night, is in the [field journal](../journal.md#the-nights). A transit is a later phase: [08-first-transit.md](08-first-transit.md).
 
 ## What counts as the clean night
 
@@ -15,7 +15,7 @@ The two 12-frame Hat-P-23 visits of 2026-11-18 (plans #19 and #22) do not count.
 
 ## Before the night
 
-1. **The network.** The router must not be on `10.0.0.x`, the telescope must be in station mode with the Alpaca switch on, and the Seestar app must be closed. The steps, and the router trap, are in the README's [Connect a real Seestar](../../README.md#connect-a-real-seestar). Checked on 2026-11-20 at the bench: the telescope joined at `192.168.1.200`, Alpaca answered, and the computer reached Open-Meteo and the Harvard VizieR mirror at the same time. The address came from the router and was not reserved, so it may change. `seestar.local` resolved to it and `--hardware-check` passed with that name as the host, so `ASTRONOMO_SEESTAR_HOST=seestar.local` (the default) works. If the name fails, look the address up again. From the computer, before you go out:
+1. **The network.** The router must not be on `10.0.0.x`, the telescope must be in station mode with the Alpaca switch on, and the Seestar app must be closed. The steps, and the router trap, are in [Connect a real Seestar](../connect-a-seestar.md). Checked on 2026-11-20 at the bench: the telescope joined at `192.168.1.200`, Alpaca answered, and the computer reached Open-Meteo and the Harvard VizieR mirror at the same time. The address came from the router and was not reserved, so it may change. `seestar.local` resolved to it and `--hardware-check` passed with that name as the host, so `ASTRONOMO_SEESTAR_HOST=seestar.local` (the default) works. If the name fails, look the address up again. From the computer, before you go out:
 
    ```bash
    curl "http://seestar.local:32323/management/v1/configureddevices"

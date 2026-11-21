@@ -85,7 +85,7 @@ def test_relative_links_resolve(path):
 def test_every_roadmap_phase_has_exit_criteria():
     text = (ROOT / "ROADMAP.md").read_text()
     phases = re.split(r"^### (?=Phase \d+: )", text, flags=re.M)[1:]
-    assert len(phases) == 7
+    assert len(phases) == 8
     for block in phases:
         title = block.splitlines()[0]
         block = re.split(r"^## ", block, flags=re.M)[0]
