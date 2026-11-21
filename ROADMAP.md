@@ -108,17 +108,17 @@ The goal is to package results for submission to the citizen-science networks. A
 #### Phase 1.7: Go public
 
 - [ ] Make the repository public.
-- [ ] **Check the recreated repository first.** On 2026-11-21 the repository was recreated with one clean commit (the old one is kept privately). Turn private vulnerability reporting on again (it was on, 2026-11-14), confirm the `tests` workflow runs and passes on the new repository, and recreate any old issue that is still wanted (three were recreated; the rest stay in the old repository).
-- [ ] **Branch protection on `main`:** block force-push and deletion, and require the `tests` check. Tried 2026-11-14: GitHub returned 403, "Upgrade to GitHub Pro or make this repository public". It waits on the plan or on going public.
+- [ ] **Check the recreated repository first.** On 2026-11-21 the repository was recreated with one clean commit (the old one is kept privately). Turn private vulnerability reporting on again (it was on, 2026-11-14), confirm the `tests` workflow runs and passes on the new repository (it has: the `main` run 44915046441 and the matrix run 44920545150 both passed, 2026-11-21), and recreate any old issue that is still wanted (three were recreated; the rest stay in the old repository).
+- [ ] **Branch protection on `main`:** block force-push and deletion, and require the checks `tests (Python 3.10)` and `frontend`. These are the names a pull request shows, because only the daily and manual runs add 3.11 to 3.13; do not require those, as they never run on a pull request. GitHub offers a check in its list only after it has run in the repository, so open a pull request first. Tried 2026-11-14: GitHub returned 403, "Upgrade to GitHub Pro or make this repository public". It waits on the plan or on going public.
 
 *Done when:* the repository is public and protection is set.
 
 **Exit criteria (all required):**
 
-- [ ] Phases 1.1 to 1.6 are done, or waived by the owner in this file.
-- [ ] A mission produces a findings package (upload files, findings summary, mission log) with no LaTeX needed (1.6). LaTeX is gone; the findings summary is open.
+- [x] Phases 1.1 to 1.6 are done, or waived by the owner in this file. Done 2026-11-21: every box in 1.1 to 1.6 is ticked and each *done when* is met.
+- [x] A mission produces a findings package (upload files, findings summary, mission log) with no LaTeX needed (1.6). LaTeX is gone; the findings summary is open. Done 2026-11-21: `python main.py --simulate` into a scratch folder wrote the upload files, `findings_<night>.md` and `mission_log_<night>.md` into one `results/` folder, and the dashboard's API returned the findings with their table, caveats and checks.
 - [ ] The repository is public (1.7), and the main branch requires the tests to pass.
-- [ ] A person who has only read the README can say what has been run on a real telescope and what has not.
+- [x] A person who has only read the README can say what has been run on a real telescope and what has not. Done 2026-11-21: the README was read again after the 1.5 cut and the 1.6 change. Its status block says two short visits have finished and names what has not been seen (a clean 40-frame night, a whole mission over station mode, a live AAVSO file, a transit), and the plugin table marks the two drafts and `transit_finder` as simulation only.
 
 ### Phase 2: First clean night
 
