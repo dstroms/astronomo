@@ -13,7 +13,7 @@ The plan: what each phase delivers, how it is built, and when it is done. **A ph
 **Next, in this order.**
 
 1. [Phase 2, first clean night](#phase-2-first-clean-night): keep the telescope awake while connected (2.1), build the recipe for repeating a night (2.2), then a 40-frame variable-star visit on the home network with nothing assumed (2.3).
-2. [Phase 3, first accepted file](#phase-3-first-accepted-file): retry buttons (3.1), then a real file through the AAVSO's own checks (3.2).
+2. [Phase 3, first accepted file](#phase-3-first-accepted-file): retry buttons (3.1), then finding out what the AAVSO wants to receive, and meeting it with a real file (3.2).
 
 Transits are [Phase 6](#phase-6-transits). Nothing before it needs one.
 
@@ -104,7 +104,7 @@ Eight phases. The order is the path: **a public repository, then a clean night, 
 
 ### Phase 3: First accepted file
 
-**Goal:** a real AAVSO Extended file from a real night is accepted by the AAVSO (level B), reviewed and sent by a person, and a failed outside call never leaves a night stranded. The findings package it is sent from is built in [Phase 1.6](docs/journal.md#phase-1-public-release-as-completed-2026-11-21) and the recipe in [Phase 2.2](#phase-2-first-clean-night).
+**Goal:** we know what the AAVSO wants to receive, and a real file from a real night in that form is accepted by them (level B), reviewed and sent by a person, and a failed outside call never leaves a night stranded. The AAVSO has not yet released a standardized format for its new intake, so the first job is to find out, not to assume the Extended file is what they want. The findings package it is sent from is built in [Phase 1.6](docs/journal.md#phase-1-public-release-as-completed-2026-11-21) and the recipe in [Phase 2.2](#phase-2-first-clean-night).
 
 **Done:** the AAVSO observer code, site and Seestar equipment are in the account (2026-11-14). The writer emits AAVSO Extended (`TG` filter code) and a finder image with the target and comparison stars marked. A missing code keeps a file a `DRAFT_`, and simulated files stay `SIMULATED_`.
 
@@ -118,22 +118,28 @@ A mission must not sit in limbo because an outside service failed. Today a call 
 
 *Done when:* in simulation, a mission whose Gaia, VizieR or Open-Meteo call fails ends in the named waiting state, the Retry button completes it once the service answers, and a test covers both. On a real night, switch the computer's network off during the reduction on a rehearsal, switch it back on, press Retry, and write down what happened.
 
-#### Phase 3.2: Put a real file through the AAVSO
+#### Phase 3.2: Find out what the AAVSO wants, then meet it
 
-- [ ] **Run the file through the AAVSO's own check.** The writer is checked against the published format, not against the AAVSO's upload page. The finder image has not met a real Seestar frame.
-- [ ] **A person reviews the package, uploads and records the acceptance.** Astronomo cannot know what a network accepted, and does not guess.
+The AAVSO Extended file is the format Astronomo writes today, because it is the only one that is published and stable. It may not be what the AAVSO wants in the end. As of 2026-11 the AAVSO appears to be building its own intake tool or channels, and we have not found a standardized format for them that has been released. Until it exists, "a file the AAVSO accepts" is not something we can define or test against, so this step starts with finding out what the AAVSO wants, and does not start by uploading.
 
-*Done when:* one real file is accepted, reviewed and sent by a person, and the AAVSO's response (accepted, rejected or warned, and why) is written in the journal.
+- [ ] **Write down what is known and what is not.** Read the AAVSO's current submission pages, forum and announcements. Record in `docs/notes/` which intake routes exist today (the WebObs upload of an Extended file, the Exoplanet report, anything newer), which are said to be going away or changing, what the new tool or channels are said to be, and whether a format or an API has been announced. Each statement carries its source and the date it was read. Nothing is written as fact that was not read.
+- [ ] **Ask the AAVSO.** Contact their staff (the observer support and technical contacts they publish), and ask: what should a new software tool send, which format and version, is there a validator or a test or sandbox intake, is there an API, who reviews a first submission, and what do they say about an automated source with a person approving each file. Say plainly that the telescope is a Seestar S50 with a 50 mm aperture, what the tool does, and that a person reviews every file. Record the answer, or the lack of one, in the journal.
+- [ ] **Decide the target format from the answer.** Keep writing Extended while it is the only accepted route, and keep the writer behind one small interface so a new format can be added without changing the mission. If a new format or API is announced, write the new writer against its spec. If nothing is announced, say so here and keep Extended.
+- [ ] **Check the file against whatever check exists.** That means the AAVSO's own validator or test intake if they give one. If none exists, check against the published Extended specification and say so, because that is not the same as the AAVSO accepting it. The finder image has not met a real Seestar frame.
+- [ ] **A person reviews the package, uploads and records the acceptance.** Astronomo cannot know what a network accepted, and does not guess. If the intake is in flux, a person uploads by hand through the route the AAVSO names, and the response is written down.
+
+*Done when:* the AAVSO's current position is written down with sources and dates, a question has been put to them and the answer (or the silence) recorded, and a target format is chosen. Then, one real file is accepted by the route they name, reviewed and sent by a person, and the AAVSO's response (accepted, rejected or warned, and why) is written in the journal. If the AAVSO has no usable route yet, the first part is the finish: say so here, with the date, and recheck.
 
 #### Phase 3.3: Decide on the AAVSO's comparison-star service
 
-- [ ] Comparison stars are a Gaia ensemble today, not a VSP chart, and a window from the Target Tool is a night, not an eclipse. Calling VSX (period, epoch) and VSP (comparison stars) would fix both. Decide from what the AAVSO asks for in 3.2.
+- [ ] Comparison stars are a Gaia ensemble today, not a VSP chart, and a window from the Target Tool is a night, not an eclipse. Calling VSX (period, epoch) and VSP (comparison stars) would fix both. Decide from what the AAVSO says it wants in 3.2, including whether their new tool supplies comparison stars itself.
 
 *Done when:* a decision is written here, with the reason.
 
 **Exit criteria (all required):**
 
-- [ ] One real upload file is accepted by the AAVSO, reviewed and sent by a person (level B), and the acceptance is written in the journal (3.2).
+- [ ] What the AAVSO accepts today, and what it has said about its new intake, is written down with sources and dates, and the AAVSO has been asked directly (3.2).
+- [ ] One real file, in the format the AAVSO names, is accepted by them, reviewed and sent by a person (level B), and the acceptance is written in the journal (3.2). If they have no usable route yet, this is replaced by a dated note saying so and a date to recheck.
 - [ ] In testing, a mission with a failing outside call ends in a named waiting state and the Retry button finishes it (3.1).
 - [ ] The file's own failure modes are known: what the AAVSO rejected or warned about, written down (3.2).
 
@@ -245,7 +251,7 @@ Today a person reads the Opportunities tab, picks a window, saves it as a plan a
 
 #### Phase 6.3: An AAVSO Exoplanet report
 
-- [ ] From the real frames, with the first frame attached and the target (T) and comparison stars (C) marked, through the AAVSO's own validator. The header has an empty `#DETREND_PARAMETERS=` that has not been checked.
+- [ ] From the real frames, with the first frame attached and the target (T) and comparison stars (C) marked, through whatever check the AAVSO provides for exoplanet reports (confirm in 3.2 that one exists and that the report format is still current). The header has an empty `#DETREND_PARAMETERS=` that has not been checked.
 
 *Done when:* the report passes the AAVSO's validator.
 
@@ -324,7 +330,7 @@ Today a person reads the Opportunities tab, picks a window, saves it as a plan a
 
 The preparation is done. Depends on claim levels and confirmation observations.
 
-- [ ] Check each format against the destination's own validator, and watch for format changes (AAVSO Exoplanet v0.62, Extended v1.2 and ADES 2017 were current when written).
+- [ ] Check each format against the destination's own validator where one exists, and watch for format changes (AAVSO Exoplanet v0.62, Extended v1.2 and ADES 2017 were current when written, and the AAVSO is building new intake, see [3.2](#phase-32-find-out-what-the-aavso-wants-then-meet-it)).
 - [ ] A human sign-off gate that records who approved which file, then optional sending (AAVSO WebObs, MPC).
 - [ ] More destinations, each researched first: the Exoplanet Transit Database, the Transient Name Server, and any BAA list with a public endpoint.
 
